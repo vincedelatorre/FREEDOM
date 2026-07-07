@@ -1,0 +1,643 @@
+{
+  "Navigation": {
+    "config": "設定"
+  },
+  "Node": {
+    "freedom": {
+      "name": "Freedom",
+      "main": {
+        "name": "メイン",
+        "restart": {
+          "button": "再起動",
+          "dialog": {
+            "title": "実行確認",
+            "content": "システムを再起動しますか？",
+            "ok": "再起動する",
+            "cancel": "キャンセル"
+          },
+          "success": "システムの再起動に成功しました",
+          "error": "システムの再起動に失敗しました"
+        }
+      },
+      "map": {
+        "name": "地図"
+      },
+      "log": {
+        "name": "実行ログ"
+      },
+      "user_interface": {
+        "name": "UI"
+      }
+    },
+    "log": {
+      "name": "実行ログ",
+      "columns": {
+        "time": "Time",
+        "name": "Name",
+        "level": "Level",
+        "message": "Message"
+      },
+      "period": {
+        "label": "期間",
+        "today": "今日",
+        "yesterday": "昨日",
+        "twoDaysAgo": "一昨日",
+        "threeDays": "直近3日間",
+        "oneWeek": "直近1週間",
+        "oneMonth": "直近1カ月間"
+      },
+      "dateRange": {
+        "startDate": "開始日付",
+        "startTime": "開始時刻",
+        "endDate": "終了日付",
+        "endTime": "終了時刻",
+        "update": "更新"
+      },
+      "toolbar": {
+        "columnManage": "列管理",
+        "saveCsv": "CSVで保存",
+        "keyword": "キーワード",
+        "clearConditions": "条件クリア"
+      },
+      "columnMenu": {
+        "searchPlaceholder": "列を検索",
+        "selectAll": "すべて選択"
+      },
+      "levelFilterMenu": {
+        "tooltip": "フィルタ",
+        "selectAll": "すべて選択"
+      },
+      "table": {
+        "sort": "並び替え",
+        "clearSort": "並び替え解除",
+        "noData": "データがありません。"
+      },
+      "dialog": {
+        "title": "実行確認",
+        "cancel": "キャンセル",
+        "confirmCsvExport": {
+          "content": "{startDate} {startTime} から {endDate} {endTime} のデータを保存しますか？",
+          "okText": "保存"
+        },
+        "confirmClearConditions": {
+          "content": "すべての条件をクリアしますか？",
+          "okText": "クリア"
+        },
+        "csvGenerating": {
+          "title": "CSV生成中…",
+          "content": "CSVファイルを生成しています。しばらくお待ちください…"
+        }
+      },
+      "errors": {
+        "dateNotSelected": "日付が選択されていません。",
+        "loadLogsFailed": "ログの取得に失敗しました。",
+        "loadMoreLogsFailed": "追加ログの取得に失敗しました。",
+        "endBeforeStart": "終了日時が開始日時よりも前になっています。"
+      }
+    },
+    "infrastructure": {
+      "name": "交通インフラ",
+      "lamp": {
+        "name": "ランプ",
+        "state": {
+          "1": "消灯",
+          "3": "点灯",
+          "5": "異常"
+        }
+      },
+      "shutter": {
+        "name": "シャッター",
+        "state": {
+          "1": "閉じ",
+          "3": "開き",
+          "5": "異常"
+        }
+      },
+      "gate": {
+        "name": "遮断機",
+        "state": {
+          "1": "閉じ",
+          "3": "開き",
+          "5": "異常"
+        }
+      },
+      "command": {
+        "manualOption": "手動操作",
+        "noCommands": "利用可能なコマンドなし",
+        "fetchError": "{node} の手動操作の取得に失敗しました",
+        "dialog": {
+          "title": "実行確認",
+          "content": "{node} {command} を実行しますか？",
+          "ok": "実行する",
+          "cancel": "キャンセル",
+          "success": "{node} {command} を実行しました",
+          "error": "{node} {command} の実行に失敗しました"
+        }
+      },
+      "intersection": {
+        "name": "交差点",
+        "state": {
+          "1": "進入可",
+          "3": "進入中"
+        }
+      }
+    },
+    "equipment": {
+      "name": "工場設備",
+      "iotdatashare": {
+        "name": "IoTDataShare"
+      },
+      "plc": {
+        "name": "PLC",
+        "state": {
+          "1": "待機",
+          "3": "動作中",
+          "5": "異常"
+        },
+        "dialog": {
+          "title": "実行確認",
+          "content": "{node} {command} を実行しますか？",
+          "write": "{node} の {name} を {value} にしますか？",
+          "ok": "実行する",
+          "cancel": "キャンセル",
+          "success": "{node} {command} を実行しました",
+          "error": "{node} {command} の実行に失敗しました"
+        },
+        "table": {
+          "title": "アドレス一覧",
+          "name": "名前",
+          "type": "種別",
+          "status": "現在値",
+          "action": "手動操作",
+          "empty": "データなし",
+          "error_message": "0以上の整数のみ入力できます"
+        },
+        "button": {
+          "on": "ON",
+          "off": "OFF",
+          "write": "書込み",
+          "write_word": "ワード書込み {value}"
+        }
+      }
+    },
+    "robot": {
+      "name": "ロボット",
+      "dummy": {
+        "name": "ダミー",
+        "state": {
+          "0": "切断",
+          "1": "待機",
+          "2": "手動",
+          "3": "動作中",
+          "4": "警告",
+          "5": "異常"
+        }
+      }
+    },
+    "job": {
+      "name": "ジョブ",
+      "active": {
+        "name": "ジョブ実行",
+        "jobName": "ジョブ名",
+        "startDate": "開始日時",
+        "errorName": "異常名",
+        "warningName": "警告名",
+        "exec": {
+          "content": "{job} ジョブを実行しますか？",
+          "ok": "実行する",
+          "success": "{job} ジョブを実行しました",
+          "error": "{job} ジョブの実行に失敗しました"
+        },
+        "stop": {
+          "label": "ジョブ停止",
+          "content":"{job} ジョブを停止しますか？",
+          "ok": "停止する",
+          "success": "{job} ジョブを停止しました",
+          "error": "{job} ジョブの停止に失敗しました"
+        },
+        "recover": {
+          "label": "ジョブ復帰",
+          "content": "{task} から復帰しますか？",
+          "ok": "復帰する",
+          "success": "{job} ジョブを復帰しました",
+          "error": "{job} ジョブの復帰に失敗しました"
+        },
+        "cancel": {
+          "label": "ジョブキャンセル",
+          "content":"{job} ジョブを破棄しますか？",
+          "ok": "破棄する",
+          "success": "{job} ジョブをキャンセルしました",
+          "error": "{job} ジョブのキャンセルに失敗しました"
+        },
+        "button": {
+          "content":"{cmd} を実行しますか？",
+          "ok": "実行する",
+          "success": "{job} ジョブ {cmd} を実行しました",
+          "error": "{job} ジョブ {cmd} の実行に失敗しました"
+        },
+        "dialog": {
+          "title": "実行確認",
+          "cancel": "キャンセル"
+        },
+        "none": "(実行中ジョブはありません)"
+      },
+      "create": {
+        "name": "ジョブ作成",
+        "jobName": "ジョブ名",
+        "load": "読込",
+        "save": {
+          "button": "保存",
+          "content":"{job} ジョブを保存しますか？",
+          "ok": "保存する",
+          "success": "{job} ジョブを保存しました",
+          "error": "{job} ジョブの保存に失敗しました"
+        },
+        "delete": {
+          "button": "削除",
+          "content":"{job} ジョブを削除しますか？",
+          "ok": "削除する",
+          "success": "{job} ジョブを削除しました",
+          "error": "{job} ジョブの削除に失敗しました"
+        },
+        "dialog": {
+          "title": "実行確認",
+          "cancel": "キャンセル"
+        },
+        "common": {
+          "control": "制御",
+          "list": "リスト",
+          "logic": "論理",
+          "loop": "繰り返し",
+          "math": "数学",
+          "text": "テキスト"
+        }
+      }
+    }
+  },
+  "Map": {
+    "DisplaySettings": "表示設定",
+    "state": {
+      "0": "切断",
+      "1": "待機",
+      "2": "手動",
+      "3": "動作中",
+      "4": "警告",
+      "5": "異常"
+    },
+    "info": {
+      "title": "情報",
+      "none": "(情報はありません)"
+    },
+    "detail": {
+      "title": "詳細",
+      "none": "(詳細情報はありません)"
+    }
+  },
+  "Config": {
+    "title": "{node} 設定",
+    "update": "設定更新",
+    "validate":{
+      "required": "入力が必須の項目です",
+      "duplicate":"値が重複した項目があります",
+      "number": {
+        "onlyInteger": "整数を入力してください",
+        "onlyNumber": "数字を入力してください",
+        "minRange": "最小値は {min} です",
+        "maxRange": "最大値は {max} です"
+      }
+    },
+    "dialog": {
+      "title": "更新確認",
+      "content": "{node} 設定を更新しますか？",
+      "ok": "更新する",
+      "cancel": "キャンセル",
+      "close": "閉じる",
+      "success": "{node} 設定を更新しました",
+      "error": "{node} 設定の更新に失敗しました",
+      "change": "変更",
+      "dirty": "変更あり"
+    },
+    "area": {
+      "text": "エリア数：{num}",
+      "areaTitle": "エリア設定",
+      "listTitle": "エリア一覧",
+      "empty": "図形がありません",
+      "table": {
+        "id": "ID",
+        "lat": "緯度",
+        "lng": "経度"
+      },
+      "prefix": "エリア"
+    },
+    "location": {
+      "text": "緯度:{lat}\n経度:{lng}",
+      "locationTitle": "位置編集",
+      "listTitle": "位置調整",
+      "empty": "アイコンがありません",
+      "table": {
+        "lat": "緯度",
+        "lng": "経度"
+      }
+    },
+    "node": {
+      "remove": "削除",
+      "append": "新規追加"
+    },
+    "geoman": {
+      "tooltips": {
+        "firstVertex": "クリックして最初の頂点を配置",
+        "continueLine": "クリックして描画を続ける",
+        "finishPoly": "最初のマーカーをクリックして終了"
+      },
+      "actions": {
+        "finish": "完了",
+        "cancel": "キャンセル",
+        "removeLastVertex": "最後の頂点を削除"
+      },
+      "buttonTitles": {
+        "drawPolyButton": "ポリゴンを描画",
+        "editButton": "レイヤーを編集",
+        "dragButton": "レイヤーをドラッグ",
+        "deleteButton": "レイヤーを削除",
+        "rotateButton": "レイヤーを回転",
+        "snappingButton": "ドラッグしたマーカーを他のレイヤーや頂点にスナップする"
+      }
+    },
+    "mapImage": {
+      "title": "画像一覧",
+      "remove": "削除",
+      "append": "新規追加",
+      "error": "画像更新に失敗しました {error}"
+    },
+    "defaultView": {
+      "text": "緯度:{lat}\n経度:{lng}\n回転角度:{rotation}\nズームレベル:{zoom}",
+      "label": "編集",
+      "defaultViewTitle": "初期位置設定",
+      "listTitle": "初期位置調整",
+      "table": {
+        "lat": "緯度",
+        "lng": "経度",
+        "rotation": "回転角度",
+        "zoomLevel": "ズームレベル"
+      }
+    },
+    "intersection": {
+      "text": "進入エリア数:{entryNum}\n予約エリア数:{reserveNum}",
+      "intersectionTitle": "交差点エリア",
+      "entryListTitle": "進入エリア一覧",
+      "reserveListTitle": "予約エリア一覧",
+      "entryCreate": "進入エリア作成",
+      "reserveCreate": "予約エリア作成",
+      "empty": "図形がありません",
+      "table": {
+        "id": "ID",
+        "lat": "緯度",
+        "lng": "経度"
+      },
+      "priority": "優先度",
+      "prefix": "エリア"
+    }
+  },
+  "Common": {
+    "dialog": {
+      "title": "実行確認",
+      "cancel": "キャンセル"
+    },
+    "unsavedNavigation": {
+      "title": "未保存の変更",
+      "body": "破棄すると、これらの変更は失われます。",
+      "ok": "破棄する",
+      "cancel": "キャンセル"
+    }
+  },
+  "Admin": {
+    "users": {
+      "title": "ユーザ管理",
+      "buttons": {
+        "create": "新規ユーザ作成",
+        "refresh": "更新"
+      },
+      "labels": {
+        "search": "検索",
+        "role": "ロール",
+        "count": "ユーザ数: {count} 件"
+      },
+      "role": {
+        "all": "すべて",
+        "none": "(なし)"
+      },
+      "table": {
+        "username": "ユーザ名",
+        "role": "ロール",
+        "actions": "操作"
+      },
+      "tooltip": {
+        "more": "操作"
+      },
+      "menu": {
+        "role": "ロール変更",
+        "password": "パスワード変更",
+        "delete": "ユーザ削除"
+      },
+      "dialog": {
+        "create": {
+          "title": "新規ユーザ作成",
+          "username": "ユーザ名",
+          "password": "パスワード",
+          "role": "ロール",
+          "ok": "作成"
+        },
+        "role": {
+          "title": "ロール変更",
+          "target": "対象ユーザ",
+          "role": "ロール",
+          "ok": "変更"
+        },
+        "password": {
+          "title": "パスワード変更",
+          "target": "対象ユーザ",
+          "newPassword": "新パスワード",
+          "ok": "変更"
+        }
+      },
+      "confirm": {
+        "title": "実行確認",
+        "create": {
+          "body": "{username} を作成します。作成後、閲覧権限設定ページに移動します。",
+          "ok": "作成"
+        },
+        "role": {
+          "body": "{username} のロールを {role} に変更しますか？",
+          "ok": "変更"
+        },
+        "password": {
+          "body": "{username} のパスワードを変更しますか？",
+          "ok": "変更"
+        },
+        "delete": {
+          "body": "{username} を削除しますか？",
+          "ok": "削除"
+        }
+      },
+      "validate": {
+        "usernameRequired": "ユーザ名を入力してください",
+        "passwordRequired": "パスワードを入力してください",
+        "newPasswordRequired": "新しいパスワードを入力してください",
+        "passwordTooShort": "パスワードは6文字以上で入力してください",
+        "roleRequired": "ロールを選択してください"
+      },
+      "busy": {
+        "default": "Loading...",
+        "create": "ユーザ作成中...",
+        "password": "パスワード変更中...",
+        "role": "ロール変更中...",
+        "delete": "ユーザ削除中..."
+      },
+      "notify": {
+        "load": { "error": "ユーザ一覧の取得に失敗しました。" },
+        "refresh": { "success": "再読み込みしました。", "error": "再読み込みに失敗しました。" },
+        "create": { "success": "ユーザを作成しました。", "error": "ユーザの作成に失敗しました。" },
+        "role": {
+          "success": "ロールを変更しました。",
+          "error": "ロールの変更に失敗しました。",
+          "cannotChangeOwn": "自分自身のロールは変更できません。"
+        },
+        "password": { "success": "パスワードを変更しました。", "error": "パスワードの変更に失敗しました。" },
+        "delete": {
+          "success": "ユーザを削除しました。",
+          "error": "ユーザの削除に失敗しました。",
+          "cannotDeleteSelf": "自分自身は削除できません。"
+        }
+      }
+    },
+    "accessControl": {
+      "title": "閲覧権限設定",
+      "labels": {
+        "user": "ユーザ",
+        "search": "検索",
+        "filter": "フィルタ",
+        "showSelectedOnly": "選択済みのみ表示"
+      },
+      "buttons": {
+        "load": "読込",
+        "save": "保存",
+        "selectAll": "すべて許可",
+        "clearAll": "すべて拒否"
+      },
+      "table": {
+        "name": "名前",
+        "repository": "リポジトリ",
+        "node": "ノード",
+        "allow": "許可"
+      },
+      "filter": {
+        "all": "すべて"
+      },
+      "confirm": {
+        "title": "実行確認",
+        "save": {
+          "body": "現在の設定を保存しますか？",
+          "ok": "保存"
+        },
+        "switchUser": {
+          "body": "未保存の変更があります。破棄してユーザを切り替えますか？",
+          "ok": "切り替える"
+        }
+      },
+      "notify": {
+        "init": { "error": "初期データの取得に失敗しました。" },
+        "userRequired": "ユーザを選択してください。",
+        "userRequiredForEdit": "対象ユーザを選択してください。",
+        "loadRequired": "読込を行ってください。",
+        "load": {
+          "success": "読み込みました。",
+          "error": "読込に失敗しました。",
+          "nodeError": "ノードの読込に失敗しました。",
+          "jobError": "ジョブの読込に失敗しました。"
+        },
+        "save": {
+          "success": "保存しました。",
+          "error": "保存に失敗しました。"
+        },
+        "selectAll": { "success": "表示中の項目を全選択しました。" },
+        "clearAll": { "success": "表示中の項目を全解除しました。" },
+        "jobNames": { "error": "ジョブ一覧の取得に失敗しました。" }
+      },
+      "tabs": {
+        "node": "ノード",
+        "job": "ジョブ"
+      },
+      "job": {
+        "labels": {
+          "search": "検索",
+          "showSelectedOnly": "選択済みのみ表示"
+        }
+      },
+      "jobTable": {
+        "jobName": "ジョブ名",
+        "allow": "許可"
+      },
+      "busy": {
+        "default": "Loading...",
+        "load": "読込中...",
+        "save": "保存中..."
+      }
+    }
+  },
+  "Login": {
+    "page": {
+      "title": "サインイン",
+      "subtitle": "ユーザ名とパスワードを入力してください",
+      "fields": {
+        "username": {
+          "label": "ユーザ名",
+          "placeholder": "例: システム管理者"
+        },
+        "password": {
+          "label": "パスワード"
+        }
+      },
+      "buttons": {
+        "signIn": "サインイン",
+        "processing": "処理中..."
+      },
+      "note": "※ ログインできない場合は管理者に連絡してください",
+      "notify": {
+        "loginSuccess": "ログインに成功しました。",
+        "usernameRequired": "ユーザ名を入力してください。",
+        "passwordRequired": "パスワードを入力してください。",
+        "loginFailed": "ログインに失敗しました"
+      }
+    }
+  },
+  "Toolbar": {
+    "accountMenu": {
+      "tooltip": {
+        "loggedInFallback": "ログイン中",
+        "loggedOut": "ログインしていません"
+      },
+      "menu": {
+        "guest": "ゲスト",
+        "login": "ログイン",
+        "logout": "ログアウト",
+        "userMissing": "(ユーザ名なし)"
+      },
+      "confirm": {
+        "title": "実行確認",
+        "logout": {
+          "body": "ログアウトしますか？",
+          "ok": "ログアウト"
+        }
+      },
+      "notify": {
+        "logout": {
+          "success": "ログアウトしました。",
+          "error": "ログアウトに失敗しました。"
+        }
+      }
+    },
+    "adminMenu": {
+      "tooltip": "管理者用設定"
+    }
+  }
+}

@@ -1,0 +1,25 @@
+# Copyright (c) 2026 TOYOTA MOTOR CORPORATION. ALL RIGHTS RESERVED.
+# SPDX-License-Identifier: Apache-2.0
+
+from src.job.task import abstract
+from src.job.task.common.text.text_trim import Domain
+
+
+class Logic(abstract.value.Logic[Domain]):
+    """text_trimタスク処理"""
+    async def init(self):
+        """ジョブ開始時処理"""
+        await super().init()
+        self._TEXT = await self.domain.TEXT.make_logic(self._job_id, self._logger)
+
+    async def exec(self) -> str:
+        """タスク実行"""
+        TEXT = str(await self._TEXT.exec())
+        if self.domain.MODE == "BOTH":
+            return TEXT.strip()
+        elif self.domain.MODE == "LEFT":
+            return TEXT.lstrip()
+        elif self.domain.MODE == "RIGHT":
+            return TEXT.rstrip()
+        else:
+            raise ValueError(f"Unknown mode: {self.domain.MODE}")
