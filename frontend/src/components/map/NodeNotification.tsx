@@ -5,8 +5,9 @@
 
 "use client";
 import * as React from "react";
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, GlobalStyles } from "@mui/material";
 import { useNotifications } from "@toolpad/core/useNotifications";
+import { MAP_Z_INDEX } from "@/components/map/mapZIndex";
 import type { NodeStatus } from "@/types/node";
 import type { NodeMarkerItem } from "@/types/map";
 
@@ -142,5 +143,13 @@ export default function NodeNotification({
     }
   }, [nodes, notifications, classifyState, makeKey, formatInfo]);
 
-  return null;
+  return (
+    <GlobalStyles
+      styles={{
+        ".MuiSnackbar-root": {
+          zIndex: MAP_Z_INDEX.NOTIFICATION,
+        },
+      }}
+    />
+  );
 }

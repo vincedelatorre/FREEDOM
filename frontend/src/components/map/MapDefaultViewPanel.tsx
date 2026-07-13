@@ -6,6 +6,7 @@
 import React, { useEffect, useState } from "react";
 import { Box, Typography, TextField, Stack } from "@mui/material";
 import { useTranslations } from "next-intl";
+import { MAP_Z_INDEX } from "@/components/map/mapZIndex";
 
 export interface MapDefaultViewPanelValue {
   lat: number;
@@ -96,7 +97,7 @@ export default function MapDefaultViewPanel({
         border: "1px solid",
         borderColor: "divider",
         p: 1,
-        zIndex: 1000,
+        zIndex: MAP_Z_INDEX.UI_OVERLAY,
         borderRadius: 1,
         boxShadow: 1,
         "& input[type=number]::-webkit-inner-spin-button, & input[type=number]::-webkit-outer-spin-button": {

@@ -20,6 +20,7 @@ import { Geoman, type GmOptionsPartial } from "@geoman-io/maplibre-geoman-free";
 
 import { Box } from "@mui/material";
 import { useTranslations } from "next-intl";
+import { MAP_Z_INDEX } from "@/components/map/mapZIndex";
 
 import IntersectionAreaModeToggle from "./IntersectionAreaModeToggle";
 import IntersectionListPanel from "./IntersectionListPanel";
@@ -1179,7 +1180,7 @@ export default function IntersectionDraw({
           position: "absolute",
           top: 10,
           right: 10,
-          zIndex: 1000,
+          zIndex: MAP_Z_INDEX.UI_OVERLAY,
           width: { xs: 250, sm: 340 },
           height: "80%",
           display: "flex",
@@ -1221,7 +1222,7 @@ export default function IntersectionDraw({
           position: "absolute",
           bottom: 10,
           right: 10,
-          zIndex: 1500,
+          zIndex: MAP_Z_INDEX.UI_OVERLAY,
           width: { xs: 250, sm: 340 },
           height: "10%",
         }}

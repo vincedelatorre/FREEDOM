@@ -5,7 +5,6 @@
 
 'use client';
 import React, { useState } from 'react';
-import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import { PageContainer } from '@toolpad/core/PageContainer';
 import { useDialogs } from '@toolpad/core/useDialogs';
@@ -23,7 +22,7 @@ export default function FreedomConfig() {
 
   const handleClick = async (): Promise<void> => {
     if (loading) return;
-    
+
     const ok = await dialogs.confirm(
       t('restart.dialog.content'),
       {
@@ -32,12 +31,15 @@ export default function FreedomConfig() {
         cancelText: t('restart.dialog.cancel'),
       }
     );
-    
+
     if (!ok) return;
-    
+
     setLoading(true);
     try {
-      await axios.put('/config/freedom.main', {version: 'main'});
+      await axios.post('/node/freedom.main', {
+        func: 'restart',
+        kwargs: { version: 'main' },
+      });
       notifications.show(t('restart.success'), {
         severity: 'success',
         autoHideDuration: 3000,

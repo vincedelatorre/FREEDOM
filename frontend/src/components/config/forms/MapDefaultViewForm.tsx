@@ -12,6 +12,7 @@ import { Close, Map } from "@mui/icons-material";
 import { useDialogs, DialogProps } from "@toolpad/core/useDialogs";
 import { FormProps } from "@/components/config/forms";
 import MapDefaultViewPanel from "@/components/map/MapDefaultViewPanel";
+import { MAP_Z_INDEX } from "@/components/map/mapZIndex";
 
 // window 読込待ち
 const MapView = dynamic(() => import("@/components/map/MapView"), { ssr: false });
@@ -64,7 +65,7 @@ function MapDefaultViewDialog({ open, onClose, setValue, getValues }: DialogProp
       open={open}
       onClose={handleClose}
       sx={{
-        zIndex: 3100,
+        zIndex: MAP_Z_INDEX.DIALOG,
       }}
     >
       <DialogTitle>

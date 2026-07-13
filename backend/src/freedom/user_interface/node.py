@@ -85,7 +85,6 @@ class Node:
             app.add_routes([
                 web.view('/domain/{node}', logic.Domain),
                 web.view('/node/{node}', logic.Node),
-                web.view('/config/freedom.main', logic.freedom.main.Config),
             ])
             runner = web.AppRunner(app)
             await runner.setup()

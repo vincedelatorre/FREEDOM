@@ -25,6 +25,7 @@ import {
 } from "@dnd-kit/sortable";
 import { restrictToVerticalAxis, restrictToFirstScrollableAncestor } from "@dnd-kit/modifiers";
 import { CSS } from "@dnd-kit/utilities";
+import { MAP_Z_INDEX } from "@/components/map/mapZIndex";
 
 export type LayerItem = { id: string; name: string; visible: boolean };
 
@@ -144,7 +145,7 @@ export default function MapLayerPanel({
     <Box
       onPointerDown={(e) => e.stopPropagation()}
       onWheel={(e) => e.stopPropagation()}
-      sx={(theme) => ({ position: "absolute", top: offset.top, right: offset.right, zIndex: zIndex ?? (theme.zIndex.modal - 1) })}
+      sx={{ position: "absolute", top: offset.top, right: offset.right, zIndex: zIndex ?? MAP_Z_INDEX.UI_OVERLAY }}
     >
       {/* 収納時は幅をタイトルに合わせる／展開時は指定width */}
       <Paper

@@ -86,6 +86,17 @@ class Node(abstract.Node):
         """
         return await self._access.fetch(node)
 
+    async def restart(self, version:str):
+        """プログラム再起動
+        Args:
+            version (str): バージョン名
+        """
+        # TODO: git checkout
+        self._logger.info(f"restart: {version=}")
+        for task in asyncio.all_tasks():
+            if task is not asyncio.current_task():
+                task.cancel()
+
     async def update_node(self, node:str, config:dict=None):
         """ノード更新
         DBに挿入後、ノード構築を行う

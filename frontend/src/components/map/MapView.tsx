@@ -14,6 +14,7 @@ import Map, { MapRef, Source, Layer, NavigationControl } from "react-map-gl/mapl
 import type { StyleSpecification } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import MapImage, { ImageResponse } from '@/components/map/MapImage'
+import { MAP_Z_INDEX } from "@/components/map/mapZIndex";
 
 const normalizeDeg = (deg: number) => ((deg % 360) + 360) % 360;
 const EMPTY_STYLE = { version: 8, sources: {}, layers: []} as const satisfies StyleSpecification;
@@ -116,14 +117,22 @@ export default function MapView(props: Props) {
         height: "100%",
         position: "relative",
         ...props.style,
+        zIndex: 0,
+        isolation: "isolate",
         "& .maplibregl-marker": {
-          zIndex: 1,
+          zIndex: MAP_Z_INDEX.MARKER,
         },
         "& .maplibregl-popup": {
-          zIndex: 1,
+          zIndex: MAP_Z_INDEX.POPUP,
+        },
+        "& .maplibregl-control-container": {
+          zIndex: MAP_Z_INDEX.UI_OVERLAY + 1,
         },
         "& .maplibregl-ctrl-top-left, & .maplibregl-ctrl-top-right, & .maplibregl-ctrl-bottom-left, & .maplibregl-ctrl-bottom-right": {
-          zIndex: 6,
+          zIndex: MAP_Z_INDEX.UI_OVERLAY + 1,
+        },
+        "& .maplibregl-ctrl-group": {
+          zIndex: MAP_Z_INDEX.UI_OVERLAY + 1,
         },
       }}
     >
@@ -133,7 +142,7 @@ export default function MapView(props: Props) {
           position: "absolute",
           bottom: 10,
           left: 10,
-          zIndex: 2,
+          zIndex: MAP_Z_INDEX.UI_OVERLAY,
           bgcolor: "background.paper",
           border: 1,
           borderColor: "divider",
@@ -262,7 +271,7 @@ export default function MapView(props: Props) {
             id={`${img.name}.${i}`}
             name={img.name}
             corners={img.corners}
-            visible
+            visible={img.visible !== false}
             editable={false}
             beforeId={i === 0 ? "overlay-anchor-layer" : `img-layer-${arr[i - 1].name}.${i - 1}`}
           />

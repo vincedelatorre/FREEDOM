@@ -39,8 +39,3 @@ export function getMapStatusChipSx(theme: Theme, status?: number) {
     color: theme.palette.getContrastText(bg),
   } as const;
 }
-
-/** マーカーの z-index オフセット */
-export function getMapStatusZIndexOffset(status?: number): number {
-  return clampMapStatus(status) * 100;
-}

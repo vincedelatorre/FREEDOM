@@ -1,0 +1,20 @@
+/**
+ * Copyright (c) 2026 TOYOTA MOTOR CORPORATION. ALL RIGHTS RESERVED.
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+export const MAP_Z_INDEX = {
+  MARKER: 1000,
+  POPUP: 1300,
+  POPUP_FROM_MARKER_OFFSET: 300,
+  UI_OVERLAY: 450000,
+  NOTIFICATION: 1400,
+  DIALOG: 3100,
+} as const;
+
+export const MAP_MARKER_PRIORITY = {
+  DOMAIN_STEP: 50000,
+  STATUS_STEP: 8000,
+  Y_BUCKETS: 1000,
+  NAME_TIE_BREAKER_MOD: 7,
+} as const;

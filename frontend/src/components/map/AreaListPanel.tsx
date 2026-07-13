@@ -23,6 +23,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import MenuIcon from "@mui/icons-material/Menu";
+import { MAP_Z_INDEX } from "@/components/map/mapZIndex";
 
 import {
   DndContext,
@@ -152,7 +153,7 @@ export default function AreaListPanel({ shapes, setShapes, applyCoordsToFeature,
         border: "1px solid",
         borderColor: "divider",
         p: 1,
-        zIndex: 1000,
+        zIndex: MAP_Z_INDEX.UI_OVERLAY,
         borderRadius: 1,
         boxShadow: 1
       }}

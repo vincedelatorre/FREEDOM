@@ -3,4 +3,3 @@
 
 from .domain import Domain
 from .node import Node
-from .freedom import main

@@ -121,7 +121,15 @@ Thank you for your interest in this project.
 We are currently preparing the workflow and guidelines for accepting external pull requests (planned to start within 2026). Contributions are highly welcome once the guidelines are published.
 Until then, we would appreciate it if you could report bugs and feature requests via GitHub Issues.
 
+## Maintainers
+FREEDOM is currently maintained by:
+- Yasuaki Miyahara (TOYOTA MOTOR CORPORATION)
+- Akio Sakuraba (TOYOTA MOTOR CORPORATION)
+- Kotaro Nagahiro (TOYOTA MOTOR CORPORATION)
+- Koyo Katagiri (TOYOTA MOTOR CORPORATION)
+- Taiki Hisamitsu (TOYOTA MOTOR CORPORATION)
+- Shogo Noguchi (TOYOTA PRODUCTION ENGINEERING)
+
 ## Contact
 For bug reports and feature requests, please open an Issue.
-For inquiries that may involve confidential information, you may also contact the Contributors of this GitHub repository directly via GitHub.
 We will review your request and respond as far as reasonably possible.
