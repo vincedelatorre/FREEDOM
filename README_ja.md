@@ -84,7 +84,8 @@ FREEDOM はマイクロサービスアーキテクチャの設計思想に基づ
 | [infrastructure/gate](backend/src/infrastructure/gate) | ゲート通過可/不可チェック |
 | [infrastructure/intersection](backend/src/infrastructure/intersection) | バーチャル交差点制御 |
 | [equipment/iotdatashare](backend/src/equipment/iotdatashare) | FA機器通信ソフトウェア IoT Data Share (*1)連携機能 |
-| [equipment/plc](backend/src/equipment/plc) | 汎用PLC連携機能 |
+| [equipment/plc](backend/src/equipment/plc) | PLC連携機能 |
+| [equipment/database](backend/src/equipment/database) | データベース連携機能 |
 
 (*1)　IoT Data Shareは、株式会社デンソーウェーブが提供する製品です。  
 本プロジェクトには、IoT Data Shareが提供するWeb APIとの連携に用いるインターフェース機能が含まれますが、
