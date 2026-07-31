@@ -85,7 +85,8 @@ For example, to integrate your new AMR into FREEDOM, you need to implement a cus
 | [infrastructure/gate](backend/src/infrastructure/gate) | Gate open/close status check |
 | [infrastructure/intersection](backend/src/infrastructure/intersection) | Virtual intersection control |
 | [equipment/iotdatashare](backend/src/equipment/iotdatashare) | Integration with FA communication software “IoT Data Share” (*1) |
-| [equipment/plc](backend/src/equipment/plc) | Generic PLC integration |
+| [equipment/plc](backend/src/equipment/plc) | PLC integration |
+| [equipment/database](backend/src/equipment/database) | Database integration |
 
 (*1) IoT Data Share is a product provided by DENSO WAVE INCORPORATED.  
 This project includes an interface for accessing the Web API provided by IoT Data Share. However, this project does not incorporate, bundle, modify, or redistribute IoT Data Share itself or any software components constituting the product.
