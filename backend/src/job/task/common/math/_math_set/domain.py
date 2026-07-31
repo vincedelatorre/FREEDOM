@@ -16,6 +16,8 @@ class Domain(abstract.statement.Domain):
         name (str): タスク名
             UIにタスク名として表示される内容
         next (Domain): 次タスク
+        should_show (bool): 表示判定
+            ジョブ実行時に表示する判定
         can_recover (bool): 復帰可能判定
             ジョブ停止時に復帰できる判定
         finished (bool): 終了フラグ
@@ -25,7 +27,7 @@ class Domain(abstract.statement.Domain):
     """
     name: str = "数字セット"
     VAR: dict[typing.Literal["id"], str] = dataclasses.field(default_factory=dict)
-    VALUE: abstract.value.Domain = None
+    VALUE: abstract.value.Domain = dataclasses.field(default_factory=abstract.value.Domain)
 
     @classmethod
     def define_block(cls) -> list[dict]:
@@ -39,14 +41,19 @@ class Domain(abstract.statement.Domain):
             "type": "_math_set",
             'tooltip': '%{BKY_VARIABLES_SET_TOOLTIP}',
             'helpUrl': '%{BKY_VARIABLES_SET_HELPURL}',
-            'message0': '%1 %2',
-            'args0': [
+            "message0": "%1 %2 タスク表示 %3",
+            "args0": [
                 {
                     "type": "field_input",
                     "name": "name",
                     "text": cls.name
                 },
                 {"type": "input_dummy"},
+                {
+                    "type": "field_checkbox",
+                    "name": "should_show",
+                    "checked": cls.should_show
+                },
             ],
             'message1': '%{BKY_VARIABLES_SET}',
             'args1': [
@@ -65,6 +72,7 @@ class Domain(abstract.statement.Domain):
             ],
             "previousStatement": None,
             "nextStatement": None,
+            "inputsInline": True,
             'style': 'math_blocks'
         }]
 
@@ -78,5 +86,12 @@ class Domain(abstract.statement.Domain):
         """
         return [{
             "kind": "block",
-            "type": "_math_set"
+            "type": "_math_set",
+            "inputs": {
+                "VALUE": {
+                    "shadow": {
+                        "type": "math_number"
+                    }
+                }
+            }
         }]

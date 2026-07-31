@@ -4,5 +4,6 @@
 from . import abstract
 from . import infrastructure
 from . import robot
+from . import job
 from . import common
 from . import equipment

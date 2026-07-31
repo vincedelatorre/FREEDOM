@@ -66,7 +66,7 @@ class Domain(abstract.value.Domain):
                     "check": "Number"
                 }
             ],
-            "output": "Array",
+            "output": None,
             'style': 'list_blocks',
             "inputsInline": True
         }]

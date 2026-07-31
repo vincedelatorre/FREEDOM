@@ -11,6 +11,8 @@ export type JobActiveResponse = {
   created_at: string
   /** 名称 */
   name: string
+  /** ジョブ表示 */
+  visible: boolean
   /** タスク内容 */
   task: StatementTaskResponse
   /** タスク変数 */
@@ -39,6 +41,8 @@ export interface StatementTaskResponse extends ValueTaskResponse {
   name: string;
   /** 次タスク */
   next: StatementTaskResponse | null;
+  /** 表示判定 */
+  should_show: boolean;
   /** 復帰可能判定 */
   can_recover: boolean;
   /** 終了フラグ */
@@ -63,6 +67,7 @@ export interface VariableResponse {
 export type CommandType =
   | "task"
   | "button"
+  | "switch"
   | "text";
 
 /** 抽象コマンド内容 */
@@ -89,6 +94,18 @@ export interface ButtonCommandResponse extends BaseCommandResponse {
   value: any;
 }
 
+/** スイッチフォーム内容 */
+export interface SwitchCommandResponse extends BaseCommandResponse {
+  /** コマンド種類 */
+  type: "switch";
+  /** ONの表示文字 */
+  label_on: string;
+  /** OFFの表示文字 */
+  label_off: string;
+  /** 返却内容 */
+  value: boolean;
+}
+
 /** 文字表示コマンド内容 */
 export interface TextCommandResponse extends BaseCommandResponse {
   /** コマンド種類 */
@@ -101,4 +118,5 @@ export interface TextCommandResponse extends BaseCommandResponse {
 export type CommandResponseType =
   | TaskCommandResponse
   | ButtonCommandResponse
+  | SwitchCommandResponse
   | TextCommandResponse;

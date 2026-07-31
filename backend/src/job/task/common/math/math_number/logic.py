@@ -7,6 +7,6 @@ from src.job.task.common.math.math_number import Domain
 
 class Logic(abstract.value.Logic[Domain]):
     """math_numberタスク処理"""
-    async def exec(self) -> float:
+    async def exec(self) -> int|float:
         """タスク実行"""
-        return float(self.domain.NUM)
+        return self.domain.NUM

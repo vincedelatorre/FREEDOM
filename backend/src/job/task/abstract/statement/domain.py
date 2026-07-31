@@ -21,6 +21,8 @@ class Domain(abstract.value.Domain):
         name (str): タスク名
             UIにタスク名として表示される内容
         next (Domain): 次タスク
+        should_show (bool): 表示判定
+            ジョブ実行時に表示する判定
         can_recover (bool): 復帰可能判定
             ジョブ停止時に復帰できる判定
         finished (bool): 終了フラグ
@@ -28,6 +30,7 @@ class Domain(abstract.value.Domain):
     """
     name:str
     next:typing.Optional['Domain'] = None
+    should_show:bool = True
     can_recover:bool = True
     finished:bool = False
     command:list = dataclasses.field(default_factory=list)
@@ -51,7 +54,7 @@ class Domain(abstract.value.Domain):
     async def make_logic(self, job_id:int, logger:logging.Logger) -> Logic:
         """タスク処理クラス作成
         Args:
-            job (active): ジョブID
+            job_id (int): ジョブID
             logger (logging.Logger): ロガー
         Returns:
             Logic: タスク処理クラス

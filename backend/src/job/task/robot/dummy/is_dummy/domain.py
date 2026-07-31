@@ -37,7 +37,7 @@ class Domain(abstract.value.Domain):
                 },
             ],
             "output": "Boolean",
-            "colour": 15
+            "colour": 20
         }]
 
     @classmethod

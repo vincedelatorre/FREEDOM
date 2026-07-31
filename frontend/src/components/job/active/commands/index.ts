@@ -7,6 +7,7 @@ import { JobActiveResponse, StatementTaskResponse, CommandType, CommandResponseT
 import TaskCommand from './TaskCommand';
 import TextCommand from './TextCommand';
 import ButtonCommand from './ButtonCommand';
+import SwitchCommand from './SwitchCommand';
 
 /** 各ジョブコマンド引数
  * @typeParam Type 各設定内容
@@ -30,5 +31,6 @@ export interface CommandProps<Type = CommandResponseType> {
 export const CommandMap: Record<CommandType, React.ComponentType<any>> = {
   task: TaskCommand,
   button: ButtonCommand,
+  switch: SwitchCommand,
   text: TextCommand,
 };

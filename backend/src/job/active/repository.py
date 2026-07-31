@@ -69,12 +69,15 @@ class Repository(repository.Repository[Node]):
                 self._logger.error(f"update error: {type(e)} - {e}")
             self._prev_data.clear()
 
-    async def append(self, name:str, task:dict, variables:list[dict]):
+    async def insert(self, name:str, task:dict, variables:list[dict]) -> str:
         """実行ジョブ追加
         Args:
             name (str): ジョブ名
             task (dict): タスク内容
             variables (list[dict]): タスク変数
+        Returns:
+            str: ジョブID
         """
         config = await self._access.insert(name, task, variables)
         self.data.append(Node(config))
+        return str(config["id"])

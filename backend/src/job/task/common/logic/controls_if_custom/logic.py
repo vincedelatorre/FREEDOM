@@ -25,13 +25,11 @@ class Logic(abstract.statement.Logic[Domain]):
                 if hasattr(self, f"DO{name[2:]}") and await logic.exec():
                     do:abstract.statement.Logic = getattr(self, f"DO{name[2:]}")
                     self.domain.command.append(command.Task(do.domain.id))
-                    self._logger.info(f"{self.domain.name}: select {name}")
                     break
             else:
                 if hasattr(self, "ELSE"):
                     do:abstract.statement.Logic = getattr(self, "ELSE")
                     self.domain.command.append(command.Task(do.domain.id))
-                    self._logger.info(f"{self.domain.name}: select ELSE")
         if self.domain.command:
             task:command.Task = self.domain.command[0]
             for logic in vars(self).values():

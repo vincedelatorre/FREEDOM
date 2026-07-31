@@ -35,10 +35,10 @@ class Logic[D:Domain](abstract.value.Logic[D], abc.ABC):
         self._logger.error(f"Failed to exec_command: name={self.domain.name=} {command=}")
         raise Exception(f"Failed to command")
 
-    def retrieve_task(self, id:str=None) -> typing.Optional["Logic"]:
+    def retrieve_task(self, id:str|None=None) -> typing.Optional["Logic[Domain]"]:
         """タスク探索
         Args:
-            id: ブロックID
+            id (str|None): ブロックID
                 Noneで実行中タスク取得
         Returns:
             Logic: タスク

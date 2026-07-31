@@ -2,11 +2,9 @@
 This guide walks you through installing FREEDOM in a local environment.
 Adjust the settings as needed to fit your environment.  
 All examples below use Windows.
-For macOS/Linux, replace `\` with `/` and adjust commands accordingly.
-
+For macOS/Linux, replace `\` with `/` and adjust commands accordingly.  
 
 ## 1. Install Required Software
-
 ### 1.1. Install Python 3.13.3
 To run the FREEDOM backend, you need **Python 3.13.3**.
 1. Download the installer from [Python.org](https://www.python.org/downloads/release/python-3133/).
@@ -17,7 +15,7 @@ To run the FREEDOM backend, you need **Python 3.13.3**.
    python --version
    ```
 4. If `Python 3.13.3` is displayed, the installation was successful.
----
+
 ### 1.2. Install Node.js
 To run the FREEDOM frontend and set up the login feature, Node.js is required.
 In this guide, we use **v24.18.0**, which is a version we have verified to work with FREEDOM.
@@ -29,7 +27,7 @@ In this guide, we use **v24.18.0**, which is a version we have verified to work 
    node -v
    ```
 4. If `v24.18.0` is displayed, the installation was successful.
----
+
 ### 1.3. Install and Configure PostgreSQL
 1. Download the installer from [PostgreSQL: Downloads](https://www.postgresql.org/download/).
 2. Run the installer.
@@ -41,10 +39,8 @@ In this guide, we use **v24.18.0**, which is a version we have verified to work 
 5. Create a database with any name you like.
    This database name will be used later when setting `dsn` and `DATABASE_URL`.
 
-
 ## 2. Set Up the FREEDOM Development Environment
 The following steps should be run in a terminal.
-
 ### 2.1. Set Up the Backend
 1. Move to the `backend` directory.
    ```bash
@@ -64,7 +60,7 @@ The following steps should be run in a terminal.
    ```bash
    (.venv) C:\your-directory\freedom\backend> pip install -r requirements.txt
    ```
----
+
 ### 2.2. Set Up the Frontend
 1. Move to the `frontend` directory.
    ```bash
@@ -79,13 +75,10 @@ The following steps should be run in a terminal.
 > Installation may take some time.
 > If it does not complete within an hour, there may be an issue with the installation.
 
-
 ## 3. Configure FREEDOM
-
 ### 3.1. Create a Backend Configuration File
 In `freedom/backend/config`, copy the template file `dummy.py` and give the copy any name you like.
 
----
 ### 3.2. Configure `main`
 In the configuration file you created, update the `main` settings to match your environment.
 ```python
@@ -107,7 +100,7 @@ postgresql://user:password@ip:port/database_name
 postgresql://postgres:password@localhost:5432/freedom_db
 ```
 - The default PostgreSQL user name is usually `postgres`.
----
+
 ### 3.3. Configure `user_interface`
 In the same configuration file, update the `user_interface` settings to match your environment.
 ```python
@@ -125,7 +118,7 @@ user_interface = freedom.user_interface.Domain(
   `http://localhost:3000`
 - To allow access from another device:
   `http://<IP address of the PC running FREEDOM>:3000`
----
+
 ### 3.4. Set FREEDOM Environment Variables for the Frontend
 Open `freedom/frontend/.env.development` and edit the following variable:
 ```env
@@ -133,29 +126,36 @@ BACKEND_BASE_URL=http://localhost:8080
 ```
 - Replace `http://localhost:8080` with the same `ip` and `port` you set in step **3.3**.
 
-
 ## 4. Initial Setup of User Authentication (Better Auth)
-> **Important**  
-> If you have never started the backend in this environment, **start the backend first (see step 5.1).**
-> You must start the backend before configuring frontend authentication or running migrations, because the following initialization steps run when the backend starts:
-> - Creation of the `auth` schema
-> - Creation of the `authz` schema / table
-> - Insertion of Casbin seed data
----
-### 4.1. Create a `.env` File for the Frontend
+### 4.1. Start the Backend
+1. Move to the project root.
+2. Activate the virtual environment.
+   ```bash
+   C:\your-directory\freedom> .\backend\.venv\Scripts\activate
+   ```
+3. Start the backend.
+   Replace `FILENAME` with the name of the configuration file you created under `backend/config` in step **3.1**.
+   Do not include the `.py` extension when specifying the filename.
+   ```bash
+   (.venv) C:\your-directory\freedom> python .\backend\ FILENAME
+   ```
+   - If you see logs like `2026-02-27,17:22:25.740,src.freedom.log,INFO,"launch"...`, the backend has started successfully.
+   - On first startup, schemas and tables required for the login feature are created automatically, and seed data is inserted.
+
+### 4.2. Create a `.env` File for the Frontend
 1. Move to the `frontend` directory.
-2. Copy `.env.example` to `.env`.
-`.env.example` contains the following entries:
-```env
-# Auth Secret (cookie signing)
-BETTER_AUTH_SECRET=
-# PostgreSQL used by Better Auth
-DATABASE_URL=postgresql://user:password@host:port/dbname?options=-c%20search_path%3Dauth
-# Better Auth (Next.js side)
-BETTER_AUTH_URL=http://localhost:3000
-```
----
-### 4.2. Generate the Auth Secret
+2. Copy `.env.example` to `.env`.  
+   `.env.example` contains the following entries:
+   ```env
+   # Auth Secret (cookie signing)
+   BETTER_AUTH_SECRET=
+   # PostgreSQL used by Better Auth
+   DATABASE_URL=postgresql://user:password@host:port/dbname?options=-c%20search_path%3Dauth
+   # Better Auth (Next.js side)
+   BETTER_AUTH_URL=http://localhost:3000
+   ```
+
+### 4.3. Generate the Auth Secret
 Generate a string to use for `BETTER_AUTH_SECRET`.
 On Windows, run the following command:
 ```bash
@@ -165,8 +165,8 @@ Copy and save the generated string.
 > **Note**
 > You can also generate the secret using the method described in the official documentation:
 > https://better-auth.com/docs/installation#set-environment-variables
----
-### 4.3. Configure `.env`
+
+### 4.4. Configure `.env`
 Set the necessary values in the `.env` file you created:
 ```env
 BETTER_AUTH_SECRET=generated_string
@@ -189,9 +189,52 @@ BETTER_AUTH_URL=http://localhost:3000
   The public URL of the frontend.
   Use the same value you set as `origin` in step **3.3**.
 
+### 4.5. Run Better Auth Migrations
+With the backend still running, open a **separate terminal** and do the following:
+1. Move to the `frontend` directory.
+   ```bash
+   C:\your-directory\freedom> cd .\frontend\
+   ```
+2. Run the Better Auth migration:
+   ```bash
+   C:\your-directory\freedom\frontend> npx auth@latest migrate --config src/lib/auth.ts
+   ```
+   - The tables used by Better Auth are created by this migration.
+   - If the following message appears, enter `y`.
+      ```bash
+      Need to install the following packages:
+      auth@1.6.3
+      Ok to proceed? (y)
+      ```
+      ```bash
+      🔑 The migration will affect the following:
+      -> name, email, emailVerified, image, createdAt, updatedAt, username, displayUsername, role, banned, banReason, banExpires fields on user table.
+      -> expiresAt, token, createdAt, updatedAt, ipAddress, userAgent, userId, impersonatedBy fields on session table.
+      -> accountId, providerId, userId, accessToken, refreshToken, idToken, accessTokenExpiresAt, refreshTokenExpiresAt, scope, password, createdAt, updatedAt fields on account table.
+      -> identifier, value, expiresAt, createdAt, updatedAt fields on verification table.
+      √ Are you sure you want to run these migrations?
+      ```
+   - If you see logs like `🚀 migration was completed successfully!`, this step has been completed successfully.
+
+### 4.6. Create an Initial Admin User
+1. In the `frontend` directory, run:
+   ```bash
+   C:\your-directory\freedom\frontend> npx tsx scripts/seed-admin.ts
+   ```
+   - If the following message appears, enter `y`.
+      ```bash
+      Need to install the following packages:
+      tsx@4.23.1
+      Ok to proceed? (y)
+      ```
+2. After running this script, the following initial admin user will be created:
+   ```text
+   username: admin
+   password: admin123
+   ```
 
 ## 5. Start FREEDOM
-
+If you have already started the backend and frontend in Step 4, this step is not required. Please proceed to Step 6.
 ### 5.1. Start the Backend
 1. Move to the project root.
 2. Activate the virtual environment.
@@ -205,35 +248,8 @@ BETTER_AUTH_URL=http://localhost:3000
    (.venv) C:\your-directory\freedom> python .\backend\ FILENAME
    ```
    - If you see logs like `2026-02-27,17:22:25.740,src.freedom.log,INFO,"launch"...`, the backend has started successfully.
-   - On first startup, schemas and tables required for the login feature are created automatically, and seed data is inserted.
-> **Caution**
-> Running commands like `python backend` can be ambiguous depending on your environment.
-> Always specify the actual script file or module name explicitly when starting the backend.
----
-### 5.2. Run Better Auth Migrations
-With the backend still running, open a **separate terminal** and do the following:
-1. Move to the `frontend` directory.
-   ```bash
-   C:\your-directory\freedom> cd .\frontend\
-   ```
-2. Run the Better Auth migration:
-   ```bash
-   C:\your-directory\freedom\frontend> npx auth@latest migrate --config src/lib/auth.ts
-   ```
-   - The tables used by Better Auth are created by this migration.
----
-### 5.3. Create an Initial Admin User
-1. In the `frontend` directory, run:
-   ```bash
-   C:\your-directory\freedom\frontend> npx tsx scripts/seed-admin.ts
-   ```
-2. After running this script, the following initial admin user will be created:
-   ```text
-   username: admin
-   password: admin123
-   ```
----
-### 5.4. Start the Frontend
+
+### 5.2. Start the Frontend
 1. Open another terminal if needed.
 2. Move to the `frontend` directory.
    ```bash
@@ -259,15 +275,13 @@ With the backend still running, open a **separate terminal** and do the followin
    ✓ Ready in 18.8s
    ```
 
-
 ## 6. Verify Operation
-
 ### 6.1. Check the FREEDOM UI
 1. In your browser, access `http://localhost:3000` or the URL you set as `origin` in step **3.3**.
 2. If the FREEDOM map screen appears, the setup is successful.
 > **Note**
 > After starting the frontend, you can also open the screen by holding **Ctrl** and clicking the `Local` URL shown in the terminal.
----
+
 ### 6.2. Check the Login Screen
 1. In your browser, open:
    ```text
@@ -278,14 +292,14 @@ With the backend still running, open a **separate terminal** and do the followin
    Username: admin
    Password: admin123
    ```
----
+
 ### 6.3. Verify After Logging In
 After logging in, verify the following:
 - When you click the account icon, your user information is displayed.
 - A gear icon for admin settings appears in the header.
 - You can access the **“Access Control Settings”** and **“User Settings”** pages.
 - “Settings” is displayed in the left navigation bar.
----
+
 ### 6.4. Change the Initial Password
 For security reasons, change the password after your first login.
 #### Steps to Change the Password
@@ -293,7 +307,6 @@ For security reasons, change the password after your first login.
 - Update the password from **“Change Password”** for the target user.
 > **Note**
 > Set the new password for the initial admin user to a length between **6 and 128 characters**.
-
 
 ## 7. Important Notes
 Perform the **initial setup** in the following order:

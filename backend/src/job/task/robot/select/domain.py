@@ -64,7 +64,7 @@ class Domain(abstract.statement.Domain):
             ],
             "previousStatement": None,
             "nextStatement": None,
-            "colour": "0"
+            "colour": 30
         }]
 
     @classmethod

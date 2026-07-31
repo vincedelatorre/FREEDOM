@@ -3,8 +3,14 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { registerDictCreateWithBlock } from "./DictCreateWith";
+import { registerFieldArea } from "./FieldArea";
+import { registerFieldLocation } from "./FieldLocation";
 import { PlcGetAddress } from "./PlcGetAddress";
 
 export const extensions = [
-    PlcGetAddress
+  registerDictCreateWithBlock,
+  registerFieldArea,
+  registerFieldLocation,
+  PlcGetAddress,
 ];

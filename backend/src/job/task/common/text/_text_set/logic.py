@@ -14,8 +14,8 @@ class Logic(abstract.statement.Logic[Domain]):
         await super().init()
         node = repository.retrieve(job.active.Node, id=self._job_id)[0]
         self._var = next(node.retrieve_variables(id=self.domain.VAR["id"]))
-        self._VALUE = await self.domain.VALUE.make_logic(self._job_id, self._logger) if self.domain.VALUE else None
+        self._VALUE = await self.domain.VALUE.make_logic(self._job_id, self._logger)
 
     async def exec(self):
         """タスク実行"""
-        self._var.value = str(await self._VALUE.exec()) if self._VALUE else None
+        self._var.value = await self._VALUE.exec()

@@ -15,7 +15,7 @@ import {
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import LocationPanel from "./LocationPanel";
 
-type MarkerGeoJSON = Feature<Point, { name?: string; rgl_id?: string }>;
+export type MarkerGeoJSON = Feature<Point, { name?: string; rgl_id?: string }>;
 
 interface MapDrawMarkerProps {
   onChange: (marker: MarkerGeoJSON | null) => void;

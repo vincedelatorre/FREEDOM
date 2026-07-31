@@ -62,6 +62,26 @@ export default function TaskCommand({
       : prevFinished ? blue[50]
       : 'background.paper'
 
+    if (!task.should_show) return (
+      <React.Fragment key={`${job.id}-${task.id}`}>
+        {task.command.filter(v => v.type === 'task').map((v, i) => {
+          const CommandComponent = CommandMap[v.type]
+          return (
+            <CommandComponent
+              key={`${job.id}-${task.id}-${i}`}
+              job={job}
+              task={task}
+              command={v}
+              onRefresh={onRefresh}
+              finished={prevFinished}
+              currentTaskId={currentTaskId}
+            />
+          )
+        })}
+        {showTaskBox(task.next, task.finished)}
+      </React.Fragment>
+    )
+
     return (
       <React.Fragment key={`${job.id}-${task.id}`}>
         <Paper

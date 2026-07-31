@@ -22,6 +22,7 @@ class Domain(abstract.statement.Domain):
         error (abstract.value.Domain): 異常名
     """
     name:str = "ジョブ異常"
+    can_recover:bool = False
     error: abstract.value.Domain = dataclasses.field(default_factory=abstract.value.Domain)
 
     @classmethod
@@ -35,7 +36,7 @@ class Domain(abstract.statement.Domain):
         return [{
             "type": "controls_error",
             "tooltip": "任意のジョブ異常を発生させる",
-            "message0": "%1 %2 異常名 %3",
+            "message0": "%1 %2 タスク表示 %3",
             "args0": [
                 {
                     "type": "field_input",
@@ -44,6 +45,14 @@ class Domain(abstract.statement.Domain):
                 },
                 {"type": "input_dummy"},
                 {
+                    "type": "field_checkbox",
+                    "name": "should_show",
+                    "checked": cls.should_show
+                },
+            ],
+            "message1": "異常名 %1",
+            "args1": [
+                {
                     "type": "input_value",
                     "align": "RIGHT",
                     "name": "error",
@@ -51,7 +60,6 @@ class Domain(abstract.statement.Domain):
                 }
             ],
             "previousStatement": None,
-            "nextStatement": None,
             "colour": 180
         }]
 

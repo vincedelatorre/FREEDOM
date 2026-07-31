@@ -12,14 +12,13 @@ class Logic(abstract.statement.Logic[Domain]):
         """ジョブ開始時処理"""
         await super().init()
         self._robot = await self.domain.robot.make_logic(self._job_id, self._logger)
-        self._lat = await self.domain.latitude.make_logic(self._job_id, self._logger)
-        self._lon = await self.domain.longitude.make_logic(self._job_id, self._logger)
+        self._location = await self.domain.location.make_logic(self._job_id, self._logger)
 
     async def exec(self):
         """タスク実行"""
         dummy:robot.dummy.Node = await self._robot.exec()
-        lat = await self._lat.exec()
-        lon = await self._lon.exec()
+        location:list[float] = await self._location.exec()
+        lat, lon = location
         if not (-90 <= lat <= 90 and -180 <= lon <= 180):
             raise ValueError(f"Invalid coordinates: ({lat}, {lon})")
         dummy.domain.location = [lat, lon]

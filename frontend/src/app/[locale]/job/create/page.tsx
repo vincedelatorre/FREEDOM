@@ -37,6 +37,7 @@ export default function JobCreatePage() {
   const [toolbox, setToolbox] = useState<Blockly.utils.toolbox.ToolboxInfo>();
   const [jobNameList, setJobNameList] = useState<string[]>();
   const [jobName, setJobName] = useState<string>("");
+  const [savedJobName, setSavedJobName] = useState<string>("");
   const [workspace, setWorkspace] = useState<{[key:string]: any}>();
   const [currentWorkspace, setCurrentWorkspace] = useState<{[key:string]: any}>();
   const dialogs = useDialogs();
@@ -80,6 +81,7 @@ export default function JobCreatePage() {
       })
       .then((res) => {
         setWorkspace(res.data ?? {});
+        setSavedJobName(jobName);
       })
       .catch(() => {});
   };
@@ -100,6 +102,7 @@ export default function JobCreatePage() {
       })
       await loadList()
       setWorkspace(currentWorkspace)
+      setSavedJobName(jobName)
       notifications.show(translate("save.success", {job: jobName}), {
         severity: 'success',
         autoHideDuration: 3000,
@@ -185,7 +188,7 @@ export default function JobCreatePage() {
             <Button
               variant="contained"
               onClick={handleUpdate}
-              disabled={!jobName}
+              disabled={!jobName || jobName === savedJobName && JSON.stringify(currentWorkspace) === JSON.stringify(workspace)}
               startIcon={<Save />}
               sx={{minWidth: {xs: '100%', sm: 'fit-content'}}}
             >

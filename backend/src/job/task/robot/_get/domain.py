@@ -40,7 +40,7 @@ class Domain(abstract.value.Domain):
                 }
             ],
             "output": "Robot",
-            "colour": "0"
+            "colour": 30
         }]
 
     @classmethod

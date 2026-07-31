@@ -15,6 +15,8 @@ class Domain(abstract.statement.Domain):
         name (str): タスク名
             UIにタスク名として表示される内容
         next (Domain): 次タスク
+        should_show (bool): 表示判定
+            ジョブ実行時に表示する判定
         can_recover (bool): 復帰可能判定
             ジョブ停止時に復帰できる判定
         finished (bool): 終了フラグ
@@ -28,7 +30,7 @@ class Domain(abstract.statement.Domain):
     """
     name: str = "条件分岐"
 
-    def __new__(cls, type:str, id=str, name="条件分岐", next=None, can_recover=True, finished=False, command=list(), **kwargs):
+    def __new__(cls, type:str, id=str, name="条件分岐", next=None, should_show=True, can_recover=True, finished=False, command=list(), **kwargs):
         """インスタンス前処理
         追加分の入力を含めたdataclassを作成して返却
         Args:
@@ -36,6 +38,7 @@ class Domain(abstract.statement.Domain):
             id (str): タスクID
             name (str): タスク名
             next (Domain): 次タスク
+            should_show (bool): 表示判定
             can_recover (bool): 復帰可能判定
             finished (bool): 終了フラグ
             command (list): コマンド内容
@@ -52,7 +55,7 @@ class Domain(abstract.statement.Domain):
             'define_block': lambda cls: list(),
             'define_toolbox': lambda cls: list(),
         })
-        return domain(type=type, id=id, name=name, next=next, can_recover=can_recover, finished=finished, command=command, **kwargs)
+        return domain(type=type, id=id, name=name, next=next, should_show=should_show, can_recover=can_recover, finished=finished, command=command, **kwargs)
 
     @classmethod
     def define_block(cls) -> list[dict]:
@@ -66,14 +69,19 @@ class Domain(abstract.statement.Domain):
         """
         return [{
             'type': 'controls_if_custom',
-            'message0': '%1 %2',
-            'args0': [
+            "message0": "%1 %2 タスク表示 %3",
+            "args0": [
                 {
                     "type": "field_input",
                     "name": "name",
                     "text": cls.name
                 },
                 {"type": "input_dummy"},
+                {
+                    "type": "field_checkbox",
+                    "name": "should_show",
+                    "checked": cls.should_show
+                },
             ],
             'message1': '%{BKY_CONTROLS_IF_MSG_IF} %1',
             'args1': [

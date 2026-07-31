@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from . import _get
+from . import get_domain
 from . import select
 
 from . import dummy

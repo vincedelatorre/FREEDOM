@@ -3,6 +3,7 @@
 
 import inspect
 import importlib
+import asyncio
 
 from src import abstract, freedom, job
 from src.repository import repository
@@ -58,7 +59,7 @@ class Node(abstract.Node):
         task = self._parse_block(blocks[0]) if blocks else dict()
         return task, workspace.get("variables", list())
 
-    def fetch_define(self) -> tuple[list[dict], list[dict]]:
+    async def fetch_define(self) -> tuple[list[dict], list[dict]]:
         """ブロック・ツールボックス定義取得
         Returns:
             tuple[list[dict], list[dict]]: ブロック定義, ツールボックス定義
@@ -81,7 +82,10 @@ class Node(abstract.Node):
                 if not hasattr(task, "Domain"):
                     continue
                 domain:type[job.task.abstract.value.Domain] = getattr(task, "Domain")
-                block.extend(domain.define_block())
+                define_block_result = domain.define_block()
+                if asyncio.coroutines.iscoroutine(define_block_result):
+                    define_block_result = await define_block_result
+                block.extend(define_block_result)
                 contents.extend(domain.define_toolbox())
             if contents:
                 category.append({
@@ -132,15 +136,17 @@ class Node(abstract.Node):
         await self._access.delete(name)
         self._logger.info(f"delete: {name=}")
 
-    async def active(self, name:str, **kwargs):
+    async def active(self, name:str, **kwargs) -> str:
         """ジョブ実行
         Args:
             name (str): ジョブ名
             **kwargs (dict): タスク変数の初期値
+        Returns:
+            str: ジョブID
         """
         workspace = await self._access.fetch_workspace(name)
         task, variables = self._to_task(workspace)
         for var in variables:
             var["value"] = kwargs.get(var.get("name"))
         self._logger.info(f"to_task: {name=} {task=} {variables=}")
-        await repository.retrieve(job.active.Repository)[0].append(name, task, variables)
+        return await repository.retrieve(job.active.Repository)[0].insert(name, task, variables)

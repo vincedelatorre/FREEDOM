@@ -9,6 +9,7 @@ import { useLocale } from "next-intl";
 import * as Blockly from "blockly/core";
 import "blockly/blocks";
 import "blockly/javascript";
+import {loops} from 'blockly/blocks';
 import { extensions } from "./extension";
 
 
@@ -115,14 +116,21 @@ export default function BlocklyEditor ({
 
     const init = async() => {
       if (!blocklyDivRef.current || workspaceRef.current) return;
-      extensions.forEach((extension) => extension());
 
       Blockly.setLocale(await localeLoaders[locale]() ?? import('blockly/msg/ja'))
+      // controls_flow_statements_customタスク(break, continue)の有効化範囲にカスタムループタスクを追加
+      loops.loopTypes.add('controls_for_custom')
+      loops.loopTypes.add('controls_forEach_custom')
+      loops.loopTypes.add('controls_forEach_dict')
+      loops.loopTypes.add('controls_repeat_ext_custom')
+      loops.loopTypes.add('controls_whileUntil_custom')
+      loops.loopTypes.add('controls_whileUntil_manual')
       workspaceRef.current = Blockly.inject(blocklyDivRef.current, {
         toolbox: toolbox,
         trashcan: true,
         zoom: { controls: true, wheel: true }
       });
+      adjustToolbox(toolbox)
       setCurrentWorkspace(Blockly.serialization.workspaces.save(workspaceRef.current));
       enforceOnlyFirstTree();
       workspaceRef.current.addChangeListener(onChange);
@@ -147,10 +155,10 @@ export default function BlocklyEditor ({
 
   /** ブロック定義更新 */
   useEffect(() => {
-      blockList.filter(
-        (block) => delete Blockly.Blocks[block.type]
-      );
-      Blockly.defineBlocksWithJsonArray(blockList);
+    blockList.filter(
+      (block) => delete Blockly.Blocks[block.type]
+    );
+    Blockly.defineBlocksWithJsonArray(blockList);
   }, [blockList])
 
   /** ツールボックス定義更新 */
@@ -165,5 +173,9 @@ export default function BlocklyEditor ({
     }
   }, [workspace])
 
-  return <div ref={blocklyDivRef} style={{ height: "600px", width: "100%" }} />;
+  return (
+    <div ref={blocklyDivRef} style={{ height: "600px", width: "100%" }}>
+      {extensions.map((Extension, index) => ( <Extension key={index} />))}
+    </div>
+  );
 };

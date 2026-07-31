@@ -26,7 +26,7 @@ class Task:
         """
         while task:
             if not task.domain.finished:
-                logger.info(f"task exec: name={task.domain.name}")
+                logger.info(f"task exec: name={task.domain.name}, type={task.domain.type}")
                 await task.exec()
                 task.domain.finished = True
             task = task.next
@@ -76,6 +76,19 @@ class Button:
     value:typing.Any
     type:str = "button"
 
+@dataclasses.dataclass
+class Switch:
+    """スイッチコマンド
+    Args:
+        label_on(str): ONでの表示内容
+        label_off(str): OFFでの表示内容
+        value (bool): 応答内容
+        type (str): コマンド種類
+    """
+    label_on:str
+    label_off:str
+    value:bool
+    type:str = "switch"
 
 @dataclasses.dataclass
 class Text:

@@ -20,8 +20,7 @@ class Logic(abstract.statement.Logic[Domain]):
         """ジョブ開始時処理"""
         await super().init()
         self._robot = await self.domain.robot.make_logic(self._job_id, self._logger)
-        self._lat = await self.domain.latitude.make_logic(self._job_id, self._logger)
-        self._lon = await self.domain.longitude.make_logic(self._job_id, self._logger)
+        self._location = await self.domain.location.make_logic(self._job_id, self._logger)
         self._speed = await self.domain.speed.make_logic(self._job_id, self._logger)
         if self.domain.stop:
             self._stop = await self.domain.stop.make_logic(self._job_id, self._logger)
@@ -71,10 +70,10 @@ class Logic(abstract.statement.Logic[Domain]):
         生成AI製
         """
         dummy:robot.dummy.Node = await self._robot.exec()
-        target_lat = await self._lat.exec()
-        target_lon = await self._lon.exec()
+        location:list[float] = await self._location.exec()
+        target_lat, target_lon = location
         if not (-90 <= target_lat <= 90 and -180 <= target_lon <= 180):
-            raise ValueError(f"Invalid coordinates: ({lat}, {lon})")
+            raise ValueError(f"Invalid coordinates: ({target_lat}, {target_lon})")
         speed_m_s = await self._speed.exec() * float(self.domain.meter) / float(self.domain.second)
         dt_s=dummy.domain.update_cycle
         tolerance_m=1.0

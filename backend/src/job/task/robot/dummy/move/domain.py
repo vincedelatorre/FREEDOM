@@ -22,15 +22,13 @@ class Domain(abstract.statement.Domain):
         finished (bool): 終了フラグ
         command (list): コマンド内容
         robot (abstract.Domain): 対象ロボット
-        latitude (abstract.Domain): 緯度
-        longitude (abstract.Domain): 経度
+        location (abstract.Domain): 位置
         speed (abstract.Domain): 速度(km/s)
         stop (abstract.Domain): 停止条件
     """
     name: str = "ダミー移動"
     robot: abstract.value.Domain = dataclasses.field(default_factory=abstract.value.Domain)
-    latitude: abstract.value.Domain = dataclasses.field(default_factory=abstract.value.Domain)
-    longitude: abstract.value.Domain = dataclasses.field(default_factory=abstract.value.Domain)
+    location: abstract.value.Domain = dataclasses.field(default_factory=abstract.value.Domain)
     meter: str = "1000"
     second: str = "3600"
     speed: abstract.value.Domain = dataclasses.field(default_factory=abstract.value.Domain)
@@ -48,7 +46,7 @@ class Domain(abstract.statement.Domain):
             "type": "robot.dummy.move",
             "tooltip": "ダミーロボットを任意の座標に移動する",
             "helpUrl": "",
-            "message0": "%1 %2 ロボット %3 緯度 %4 経度 %5 速度( %6 / %7 ) %8 停止条件 %9",
+            "message0": "%1 %2 ロボット %3 位置 %4 速度( %5 / %6 ) %7 停止条件 %8",
             "args0": [
                 {
                     "type": "field_input",
@@ -63,16 +61,10 @@ class Domain(abstract.statement.Domain):
                     "check": "Robot"
                 },
                 {
-                    "type": "input_value",
-                    "name": "latitude",
+                    'type': 'input_value',
+                    'name': 'location',
                     "align": "RIGHT",
-                    "check": "Number"
-                },
-                {
-                    "type": "input_value",
-                    "name": "longitude",
-                    "align": "RIGHT",
-                    "check": "Number"
+                    'check': 'Location',
                 },
                 {
                     "type": "field_dropdown",
@@ -107,7 +99,7 @@ class Domain(abstract.statement.Domain):
             ],
             "previousStatement": None,
             "nextStatement": None,
-            "colour": 15,
+            "colour": 20,
         }]
 
     @classmethod
@@ -118,7 +110,6 @@ class Domain(abstract.statement.Domain):
         Returns:
             list[dict]: ツールボックス定義
         """
-        map = repository.retrieve(freedom.map.Node)[0]
         return [{
             "kind": "block",
             "type": "robot.dummy.move",
@@ -128,20 +119,9 @@ class Domain(abstract.statement.Domain):
                         "type": "robot._get"
                     }
                 },
-                "latitude": {
+                "location": {
                     "shadow": {
-                        "type": "math_number",
-                        "fields": {
-                            "NUM": map.domain.default_view.center[0]
-                        }
-                    }
-                },
-                "longitude": {
-                    "shadow": {
-                        "type": "math_number",
-                        "fields": {
-                            "NUM": map.domain.default_view.center[1]
-                        }
+                        "type": "location_create"
                     }
                 },
                 "speed": {

@@ -15,7 +15,6 @@ class Area:
     name:str
     vertex_list:list[list[float]]
 
-
 def _is_inside(location:list[float,float], area_list:list[Area]) -> bool:
     """エリア内判定
     レイキャスティング法でエリア内判定

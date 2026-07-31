@@ -16,9 +16,9 @@ class Logic(abstract.statement.Logic[Domain]):
 
     async def exec(self) -> list:
         """タスク実行"""
-        LIST = list(await self._LIST.exec())
+        LIST:list = await self._LIST.exec()
         AT = int(await self._AT.exec())
-        TO = int(await self._TO.exec())
+        TO = await self._TO.exec()
         if self.domain.WHERE == "FROM_START":
             index = AT - 1
         elif self.domain.WHERE == "FROM_END":

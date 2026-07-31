@@ -14,18 +14,18 @@ import { Geoman, type GmOptionsPartial,} from "@geoman-io/maplibre-geoman-free";
 import AreaListPanel from "./AreaListPanel";
 import { useTranslations } from "next-intl";
 
+
+export type Area = {
+  name: string;
+  vertex_list: number[][];
+};
 interface MapDrawProps {
   onChange: (shapes: AreaGeoJSON[]) => void;
   initialShapes?: Area[]; // Area形式 [{ name, vertex_list }]
 }
 
-type Area = {
-  name: string;
-  vertex_list: number[][];
-};
-
 type AreaGeoJSONProps = { name: string; gm_id?: string; vertex_list?: number[][] };
-type AreaGeoJSON = Feature<Polygon, AreaGeoJSONProps>;
+export type AreaGeoJSON = Feature<Polygon, AreaGeoJSONProps>;
 
 const GM_SOURCE_ID_FALLBACK = "gm_main";
 const EPS = 1e-12;

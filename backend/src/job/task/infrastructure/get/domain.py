@@ -39,7 +39,6 @@ class Domain(abstract.value.Domain):
             ],
             "output": "Infrastructure",
             "colour": 60,
-            "category": "infrastructure",
             "tooltip": "",
         }]
 

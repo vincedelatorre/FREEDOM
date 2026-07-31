@@ -160,7 +160,7 @@ const NodeMarker = memo(function NodeMarker({
     let markerEl: HTMLElement | undefined;
     if (primaryUrl) {
       markerEl = document.createElement("div");
-      markerEl.style.cssText = "position:relative;width:40px;height:40px;overflow:visible";
+      markerEl.style.cssText = "width:40px;height:40px;overflow:visible";
       const img = document.createElement("img");
       img.src = primaryUrl;
       img.width = 40;
@@ -173,7 +173,8 @@ const NodeMarker = memo(function NodeMarker({
     const marker = new maplibregl.Marker({
       element: markerEl,
       color: primaryUrl ? undefined : statusColor,
-      anchor: "bottom",
+      anchor: primaryUrl ? "center" : "bottom",
+      offset: primaryUrl ? [0, 0] : [0, 6],
     })
       .setLngLat([lng, lat])
       .addTo(map);
@@ -222,7 +223,7 @@ const NodeMarker = memo(function NodeMarker({
       map.off("resize", updateMarkerZIndex);
       marker.remove();
     };
-  }, [mapRef, statusColor, primaryUrl, name, onClick, showLabel, computeMarkerPriority]);
+  }, [mapRef, statusColor, primaryUrl, name, onClick, showLabel, computeMarkerPriority, lng, lat]);
 
   useEffect(() => {
     const map = mapRef?.getMap();

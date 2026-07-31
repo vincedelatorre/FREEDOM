@@ -159,12 +159,14 @@ export default function JobActivePage() {
             </Button>
           </Stack>
           <Masonry columns={{ xs: 1, sm: 2, md: 3 }} spacing={2}>
-            {jobList.map((job) => (
-              <ActiveJobCard
-                key={job.id}
-                job={job}
-                onRefresh={fetchJob}
-              />
+            {jobList
+              .filter((job) => job.visible)
+              .map((job) => (
+                <ActiveJobCard
+                  key={job.id}
+                  job={job}
+                  onRefresh={fetchJob}
+                />
             ))}
           </Masonry>
         </Stack>

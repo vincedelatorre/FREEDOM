@@ -144,6 +144,15 @@
     },
     "equipment": {
       "name": "工場設備",
+      "database": {
+        "name": "データベース",
+        "state": {
+          "0": "切断",
+          "1": "待機",
+          "3": "動作中",
+          "5": "異常"
+        }
+      },
       "iotdatashare": {
         "name": "IoTDataShare"
       },
@@ -265,11 +274,26 @@
         },
         "common": {
           "control": "制御",
+          "dict": "辞書",
           "list": "リスト",
           "logic": "論理",
           "loop": "繰り返し",
+          "map": "地図",
           "math": "数学",
-          "text": "テキスト"
+          "text": "テキスト",
+          "time": "時間"
+        },
+        "area": {
+          "name": "エリア",
+          "title": "エリア設定",
+          "close": "閉じる",
+          "empty": "エリア未設定"
+        },
+        "location": {
+          "name": "位置",
+          "title": "位置設定",
+          "close": "閉じる",
+          "empty": "位置未設定"
         }
       }
     }

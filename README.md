@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/FREEDOM_key_visual.png" alt="FREEDOM - A Dream and Entertainment." width="800">
+  <img src="docs/FREEDOM_key_visual.png" alt="FREEDOM - Dreams and Entertainment." width="800">
 </p>
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white" alt="Python">
@@ -21,16 +21,16 @@
 FREEDOM is a fleet management and orchestration platform for AMRs and other transport robots, designed to seamlessly coordinate robot operations with plant infrastructure systems.
 In addition to typical Warehouse Control System (WCS) capabilities, FREEDOM provides the following features:
 
-- **Unified Portal**
-  - By integrating various robot APIs, FREEDOM enables control of multiple robot types with different coordinate systems. FREEDOM provides a unified dashboard that visualizes the status of all equipment in real time, improving operational efficiency for on-site workers.
-- **Job Creator**
-  - Users can create a sequence (job) consisting of multiple tasks via the Web UI, enabling on-site workers to independently implement Kaizen (continuous improvement).
-- **Infrastructure-linked zones**
-  - Users can draw zones on the Web UI that are linked to internal traffic infrastructure devices such as signal lamps or shutters, specifying where these devices should be triggered. This function makes on-site adjustment easier.
+- **Unified Portal**  
+   By integrating various robot APIs, FREEDOM enables control of multiple robot types with different coordinate systems. FREEDOM provides a unified dashboard that visualizes the status of all equipment in real time, improving operational efficiency for on-site workers.
+- **Job Creator**  
+   Users can create a sequence (job) consisting of multiple tasks via the Web UI, enabling on-site workers to independently implement Kaizen (continuous improvement).
+- **Infrastructure-linked zones**  
+   Users can draw zones on the Web UI that are linked to internal traffic infrastructure devices such as signal lamps or shutters, specifying where these devices should be triggered. This function makes on-site adjustment easier.
 
 <br>
 <p align="center">
-  <img src="docs/Freedom_sample.png" alt="Example dashboard showing robot coordination and infrastructure control" width="1000">
+  <img src="docs/FREEDOM_sample.png" alt="Example dashboard showing robot coordination and infrastructure control" width="1000">
 </p>
 
 ## Who is this for?
@@ -39,25 +39,29 @@ In addition to typical Warehouse Control System (WCS) capabilities, FREEDOM prov
 - Developers building Warehouse Control Systems (WCS) and robotics platforms
 
 ## Terminology
-This project uses the following terminology, which may differ from common Git/GitHub usage:
-- **Repository**
-  - A logical unit representing a “functional category” inside FREEDOM.
-    It corresponds to the directory structure `backend/src/<repository>/`.
-    There are five repositories: `freedom`, `job`, `robot`, `infrastructure`, and `equipment`.
-- **Node**
-  - An executable unit with a specific role (service / functional module).
-    It corresponds to the directory structure `backend/src/<repository>/<node>/`.
-    Example: `backend/src/robot/dummy` represents the `dummy` node belonging to the `robot` repository.
+This project defines the following terms to avoid ambiguity.
 
-**Note:**
-In this documentation, *repository* does **not** refer to a GitHub repository (a remote code hosting unit), but to an internal functional category of FREEDOM.
-When referring to a GitHub repository, we explicitly say **“GitHub repository”**.
+- **Repository**  
+   A logical unit representing a functional category within FREEDOM.
+   It corresponds to the directory structure `backend/src/<repository>/`.  
+   This concept is inspired by the Repository pattern used in Domain-Driven Design (DDD) and Clean Architecture, and is defined as a unit for grouping related functionality.  
+   The five repositories are: `freedom`, `job`, `robot`, `infrastructure`, and `equipment`.
+
+- **Node**  
+   An execution unit (service or functional module) with a specific responsibility.
+   It corresponds to the directory structure `backend/src/<repository>/<node>/`.  
+   For example, `backend/src/robot/dummy` represents the `dummy` node that belongs to the `robot` repository.
+
+**Note:**  
+The term "repository" in this project does **not** refer to a GitHub repository (a remote code management unit), but rather to a functional category within FREEDOM.  
+While the concept is inspired by the Repository pattern in DDD and Clean Architecture, it does not represent a data access layer itself.  
+In this README, when referring to a repository hosted on GitHub, the term **"GitHub repository"** will be used explicitly.
 
 ## System Architecture
 FREEDOM follows a microservices architecture and is composed of multiple nodes (services), each with an independent function.
 Each node must belong to exactly one “repository” (functional category). In terms of directory layout, a node is located at `backend/src/<repository>/<node>/`.
-For example, to integrate your new AMR into FREEDOM, you need to implement a custom node that contains the AMR’s API commands and place it under the `robot` repository (`backend/src/robot/<your_amr_node>`).
 
+For example, to integrate your new AMR into FREEDOM, you need to implement a custom node that contains the AMR’s API commands and place it under the `robot` repository (`backend/src/robot/<your_amr_node>`).
 - [freedom](backend/src/freedom) - Core program of FREEDOM (`freedom` repository)
 - [job](backend/src/job) - Job creation and execution (`job` repository)
 - [robot](backend/src/robot) - Robot control (`robot` repository)
@@ -83,10 +87,12 @@ For example, to integrate your new AMR into FREEDOM, you need to implement a cus
 | [equipment/iotdatashare](backend/src/equipment/iotdatashare) | Integration with FA communication software “IoT Data Share” (*1) |
 | [equipment/plc](backend/src/equipment/plc) | Generic PLC integration |
 
-(*1) IoT Data Share is a product of DENSO WAVE INCORPORATED, and this project is not affiliated with the company or the product in any way.
+(*1) IoT Data Share is a product provided by DENSO WAVE INCORPORATED.  
+This project includes an interface for accessing the Web API provided by IoT Data Share. However, this project does not incorporate, bundle, modify, or redistribute IoT Data Share itself or any software components constituting the product.
+Furthermore, this project is not developed, provided, or supported by DENSO WAVE INCORPORATED, nor does it imply any approval, endorsement, or warranty by DENSO WAVE INCORPORATED with respect to this project.
+Any use of IoT Data Share is subject to the contractual terms and conditions and any other applicable terms of use separately established for that product.
 
 ## Installation
-
 ### Run from a package
 Pre-built packages are not yet available.
 
@@ -113,8 +119,10 @@ In the meantime:
 - Explore each repository for example implementations
 
 ## License
-This project is licensed under the [Apache License, Version 2.0](LICENSE).
-FREEDOM software developed prior to January 2026 is unrelated to this project.
+This project is licensed under the [Apache License, Version 2.0](LICENSE).  
+This License applies solely to FREEDOM released under this project.
+Any version of FREEDOM developed on or before December 31, 2025 (the "Prior Version") is excluded from the scope of this License.
+For the avoidance of doubt, this License neither modifies nor affects any contract, license, or other terms and conditions previously established with respect to the Prior Version.
 
 ## Contribution
 Thank you for your interest in this project.

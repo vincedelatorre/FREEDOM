@@ -27,7 +27,7 @@ class Variable:
 class NodeDomain:
     """ジョブ実行ノード設定
     Args:
-        id (int): 番号
+        id (str): ノードID
         created_at (datetime.datetime): 生成日時
         name (str): 名前
         task (task.abstract.Domain): タスク内容
@@ -35,8 +35,9 @@ class NodeDomain:
         command (Task): タスク実行管理
         error_msg (set): 異常メッセージ
         warning_msg (set): 警告メッセージ
+        visible (bool): 可視化フラグ
     """
-    id:int
+    id:str
     created_at:datetime.datetime
     name:str
     task:job.task.abstract.statement.Domain
@@ -44,6 +45,7 @@ class NodeDomain:
     command:job.command.Task = None
     error_msg:set = dataclasses.field(default_factory=set)
     warning_msg:set = dataclasses.field(default_factory=set)
+    visible:bool = True
 
     def __post_init__(self):
         """初期化後処理"""

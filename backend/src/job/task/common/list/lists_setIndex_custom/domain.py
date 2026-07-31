@@ -15,6 +15,8 @@ class Domain(abstract.statement.Domain):
         name (str): タスク名
             UIにタスク名として表示される内容
         next (Domain): 次タスク
+        should_show (bool): 表示判定
+            ジョブ実行時に表示する判定
         can_recover (bool): 復帰可能判定
             ジョブ停止時に復帰できる判定
         finished (bool): 終了フラグ
@@ -44,7 +46,7 @@ class Domain(abstract.statement.Domain):
             "type": "lists_setIndex_custom",
             "tooltip": "",
             "helpUrl": "%{BKY_LISTS_SET_INDEX_HELPURL}",
-            "message0": "%1 %2",
+            "message0": "%1 %2 タスク表示 %3",
             "args0": [
                 {
                     "type": "field_input",
@@ -52,6 +54,11 @@ class Domain(abstract.statement.Domain):
                     "text": cls.name
                 },
                 {"type": "input_dummy"},
+                {
+                    "type": "field_checkbox",
+                    "name": "should_show",
+                    "checked": cls.should_show
+                },
             ],
             "message1": "%{BKY_LISTS_SET_INDEX_INPUT_IN_LIST} %1 %2 %3 %4 %5 %6 %{BKY_LISTS_SET_INDEX_INPUT_TO} %7",
             "args1": [
@@ -90,8 +97,8 @@ class Domain(abstract.statement.Domain):
             ],
             "previousStatement": None,
             "nextStatement": None,
-            'style': 'list_blocks',
-            "inputsInline": True
+            "inputsInline": True,
+            'style': 'list_blocks'
         }]
 
     @classmethod

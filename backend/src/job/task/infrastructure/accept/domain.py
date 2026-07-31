@@ -2,40 +2,39 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import dataclasses
-import typing
 
-from src.job import command
 from src.job.task import abstract
 
 
 @dataclasses.dataclass
 class Domain(abstract.statement.Domain):
     """インフラ設備連携タスク
-    Args:
+    Attributes:
         type (str): タスク種類
         id (str): タスクID
         name (str): タスク名
             UIにタスク名として表示される内容
         next (Domain): 次タスク
+        should_show (bool): 表示判定
+            タスクをUIに表示するかどうか
         can_recover (bool): 復帰可能判定
             ジョブ停止時に復帰できる判定
         finished (bool): 終了フラグ
         command (list): コマンド内容
         robot (abstract.value.Domain): 連携ロボット
         exclude (abstract.value.Domain): 除外設備
-        update_cycle (float): 更新周期
-        warning_time (abstract.value.Domain): 許可待ち警告秒
-        accept (dict[typing.Literal["id"], str]): 連携結果代入先
+        update_cycle (abstract.value.Domain): 更新周期
+        warning_time (abstract.value.Domain): 許可待ち警告時間
         task (abstract.statement.Domain): サブタスク
     """
     name: str = "インフラ設備連携"
-    can_recover: bool = False
+    should_show:bool = False
+    can_recover:bool = False
     robot: abstract.value.Domain = dataclasses.field(default_factory=abstract.value.Domain)
     exclude: abstract.value.Domain = None
-    update_cycle: float = 1.0
+    update_cycle: abstract.value.Domain = dataclasses.field(default_factory=abstract.value.Domain)
     warning_time: abstract.value.Domain = dataclasses.field(default_factory=abstract.value.Domain)
-    accept: dict[typing.Literal["id"], str] = dataclasses.field(default_factory=dict)
-    task: abstract.statement.Domain = dataclasses.field(default_factory=abstract.statement.Domain)
+    task: abstract.statement.Domain = None
 
     @classmethod
     def define_block(cls) -> list[dict]:
@@ -47,7 +46,7 @@ class Domain(abstract.statement.Domain):
         """
         return [{
             "type": "infrastructure.accept",
-            "message0": "%1 %2 連携ロボット %3 除外設備 %4 更新周期 %5 秒 %6 許可待ち警告秒 %7 通行許可変数 %8 %9 %10",
+            "message0": "%1 %2 タスク表示 %3",
             "args0": [
                 {
                     "type": "field_input",
@@ -55,6 +54,14 @@ class Domain(abstract.statement.Domain):
                     "text": cls.name
                 },
                 {"type": "input_dummy"},
+                {
+                    "type": "field_checkbox",
+                    "name": "should_show",
+                    "checked": cls.should_show
+                },
+            ],
+            "message1": "連携ロボット %1 除外設備 %2 更新周期 %3 許可待ち警告時間 %4 %5",
+            "args1": [
                 {
                     "type": "input_value",
                     "name": "robot",
@@ -68,26 +75,17 @@ class Domain(abstract.statement.Domain):
                     "check": ["Infrastructure", "Array"]
                 },
                 {
-                    "type": "field_number",
+                    "type": "input_value",
                     "name": "update_cycle",
-                    "value": cls.update_cycle,
-                    "min": 0
+                    "align": "RIGHT",
+                    "check": "TimeDelta"
                 },
-                {"type": "input_dummy", "align": "RIGHT"},
                 {
                     "type": "input_value",
                     "name": "warning_time",
                     "align": "RIGHT",
-                    "check": "Number"
+                    "check": "TimeDelta"
                 },
-                {
-                    "type": "field_variable",
-                    "name": "accept",
-                    "variable": "accept",
-                    "variableTypes": ["Boolean"],
-                    "defaultType": "Boolean"
-                },
-                {"type": "input_dummy", "align": "RIGHT"},
                 {
                     "type": "input_statement",
                     "name": "task"
@@ -116,11 +114,39 @@ class Domain(abstract.statement.Domain):
                         "type": "robot._get"
                     }
                 },
+                "update_cycle": {
+                    "shadow": {
+                        "type": "time_delta_duration",
+                        "inputs": {
+                            "time": {
+                                "shadow": {
+                                    "type": "math_number",
+                                    "fields": {
+                                        "NUM": 1
+                                    }
+                                }
+                            },
+                        },
+                        "fields": {
+                            "unit": "seconds",
+                        }
+                    }
+                },
                 "warning_time": {
                     "shadow": {
-                        "type": "math_number",
+                        "type": "time_delta_duration",
+                        "inputs": {
+                            "time": {
+                                "shadow": {
+                                    "type": "math_number",
+                                    "fields": {
+                                        "NUM": 1
+                                    }
+                                }
+                            },
+                        },
                         "fields": {
-                            "NUM": 60
+                            "unit": "minutes",
                         }
                     }
                 }

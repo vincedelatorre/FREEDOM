@@ -14,4 +14,4 @@ class Logic(abstract.statement.Logic[Domain]):
 
     async def exec(self):
         """タスク実行"""
-        raise Exception(await self._error.exec())
+        raise RuntimeError(await self._error.exec())

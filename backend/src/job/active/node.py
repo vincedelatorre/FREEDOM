@@ -25,7 +25,10 @@ class Node(abstract.Node):
         self._logger.info(f"launch: {self.domain}")
 
     async def _loop(self):
-        """処理ループ"""
+        """処理ループ
+        Returns:
+            typing.Any: タスク実行結果
+        """
         task:asyncio.Task = None
         prev_warning_msg = set(self.domain.warning_msg)
         try:
@@ -37,16 +40,21 @@ class Node(abstract.Node):
             while sys.getrefcount(self) > 2:
                 await asyncio.sleep(0)
                 if self.domain.warning_msg and self.domain.warning_msg != prev_warning_msg:
-                    self._logger.warning(f"task warning: {self.domain.warning_msg}")
+                    self._logger.warning(f"job warning: {self.domain.warning_msg}")
                 prev_warning_msg = set(self.domain.warning_msg)
                 # タスク異常判定
                 if task and task.done() and not task.cancelled() and task.exception():
+                    exception = task.exception()
+                    if isinstance(exception, job.task.job.active.exception.Result):
+                        return exception.args[0]
                     self.domain.error_msg.add(str(task.exception()))
+                    self._logger.error(f"task error: {type(task.exception())} - {task.exception()}")
                 if self.domain.error_msg:
                     if task:
                         if not task.done() and not task.cancelling():
                             task.cancel()
-                        self._logger.error(f"task error: {self.domain.error_msg}")
+                        t = self._task_logic.retrieve_task()
+                        self._logger.error(f"job error: task={t.domain.name if t else None}, msg={self.domain.error_msg}")
                     task = None
                     continue
                 # タスク終了判定
