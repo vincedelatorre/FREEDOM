@@ -18,7 +18,7 @@ class Domain(abstract.value.Domain):
     """
     LEFT: abstract.value.Domain = dataclasses.field(default_factory=abstract.value.Domain)
     RIGHT: abstract.value.Domain = dataclasses.field(default_factory=abstract.value.Domain)
-    operator:str = "+"
+    operator:str = "-"
 
     @classmethod
     def define_block(cls) -> list[dict]:
@@ -67,17 +67,17 @@ class Domain(abstract.value.Domain):
             "kind": "block",
             "type": "time_delta_arithmetic",
             "fields": {
-                "operator": "-"
+                "operator": cls.operator
             },
             "inputs": {
                 "LEFT": {
                     "shadow": {
-                        "type": "_time__get",
+                        "type": "_time_now",
                     }
                 },
                 "RIGHT": {
                     "shadow": {
-                        "type": "_time_now",
+                        "type": "_time__get",
                     }
                 }
             }

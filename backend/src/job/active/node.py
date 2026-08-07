@@ -154,7 +154,7 @@ class Node(abstract.Node):
         for cmd in task.domain.command:
             if not isinstance(cmd, job.command.Task):
                 continue
-            for logic in vars(self).values():
+            for logic in vars(task).values():
                 if not isinstance(logic, job.task.abstract.statement.Logic):
                     continue
                 if logic.domain.id != cmd.id:

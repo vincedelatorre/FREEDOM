@@ -15,7 +15,8 @@ class Logic(abstract.statement.Logic[Domain]):
     async def init(self):
         """ジョブ開始時処理"""
         await super().init()
-        self._DO = await self.domain.DO.make_logic(self._job_id, self._logger) if self.domain.DO else None
+        logger = self._logger if self.domain.should_log else logging.getLogger("loop")
+        self._DO = await self.domain.DO.make_logic(self._job_id, logger) if self.domain.DO else None
         if not self.domain.command:
             self.domain.command.append(command.Switch(self.domain.label_on, self.domain.label_off, True))
             if self.domain.DO:
@@ -23,14 +24,12 @@ class Logic(abstract.statement.Logic[Domain]):
 
     async def exec(self):
         """タスク実行"""
+        logger = self._logger if self.domain.should_log else logging.getLogger("loop")
         while True:
             try:
                 if len(self.domain.command) > 1:
                     task:command.Task = self.domain.command[1]
-                    if self.domain.should_log:
-                        await task.exec(self._DO, self._logger)
-                    else:
-                        await task.exec(self._DO, logging.getLogger("loop"))
+                    await task.exec(self._DO, logger)
             except LoopBreak:
                 break
             except LoopContinue:
@@ -38,8 +37,9 @@ class Logic(abstract.statement.Logic[Domain]):
             if not self.domain.command[0].value:
                 break
             self.domain.DO = abstract.statement.Domain.to_domain(self.domain.DO_copy) if self.domain.DO_copy else None
-            self._DO = await self.domain.DO.make_logic(self._job_id, self._logger) if self.domain.DO else None
+            self._DO = await self.domain.DO.make_logic(self._job_id, logger) if self.domain.DO else None
             await asyncio.sleep(0)
+        self.domain.command.clear()
 
     async def exec_command(self, command:bool):
         """コマンド実行

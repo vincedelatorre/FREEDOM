@@ -115,7 +115,7 @@ export default function Page() {
   const [pwOpen, setPwOpen] = React.useState(false);
   const [pwUser, setPwUser] = React.useState<UserItem | null>(null);
   const [newPassword, setNewPassword] = React.useState("");
-  const MIN_PASSWORD_LENGTH = 6;
+  const MIN_PASSWORD_LENGTH = 1;
 
   const [roleOpen, setRoleOpen] = React.useState(false);
   const [roleUser, setRoleUser] = React.useState<UserItem | null>(null);

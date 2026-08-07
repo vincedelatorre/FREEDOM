@@ -128,7 +128,8 @@ export default function BlocklyEditor ({
       workspaceRef.current = Blockly.inject(blocklyDivRef.current, {
         toolbox: toolbox,
         trashcan: true,
-        zoom: { controls: true, wheel: true }
+        zoom: { controls: true },
+        move: { wheel: true }
       });
       adjustToolbox(toolbox)
       setCurrentWorkspace(Blockly.serialization.workspaces.save(workspaceRef.current));

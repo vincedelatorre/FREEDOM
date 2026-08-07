@@ -6,6 +6,7 @@ import asyncio
 from src.repository import repository
 from src import job
 from src.abstract import Node
+from src.job import command
 from src.job.task import abstract
 from src.job.task.job.active.exec import Domain
 
@@ -34,13 +35,23 @@ class Logic(abstract.statement.Logic[Domain]):
             raise Exception(f"{self.domain.job}の実行に失敗")
         child = repository.retrieve(job.active.Node, id=job_id)[0]
         child.domain.visible = False
-        self._logger.info(f"job={self.domain.job}, kwargs={kwargs}")
         parent = repository.retrieve(job.active.Node, id=self._job_id)[0]
+        prev_warning_msg = set()
         try:
             while not child._task.done():
                 parent.domain.error_msg.update(child.domain.error_msg)
-                parent.domain.warning_msg.update(child.domain.warning_msg)
+                if child.domain.warning_msg != prev_warning_msg:
+                    parent.domain.warning_msg.difference_update(prev_warning_msg)
+                    parent.domain.warning_msg.update(child.domain.warning_msg)
+                    prev_warning_msg = set(child.domain.warning_msg)
                 await asyncio.sleep(0)
             self._var.value = child._task.result()
+            if self._var.value is not None:
+                self.domain.command.append(command.Text(str(self._var.value)))
+                self._logger.info(f"return={self._var.value}")
         finally:
             child._task.cancel()
+            if child.domain.warning_msg != prev_warning_msg:
+                parent.domain.warning_msg.difference_update(prev_warning_msg)
+                parent.domain.warning_msg.update(child.domain.warning_msg)
+                prev_warning_msg = set(child.domain.warning_msg)

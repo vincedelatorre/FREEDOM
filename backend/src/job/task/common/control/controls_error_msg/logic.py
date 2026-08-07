@@ -12,4 +12,4 @@ class Logic(abstract.value.Logic[Domain]):
     async def exec(self):
         """タスク実行"""
         j = repository.retrieve(job.active.Node, id=self._job_id)[0]
-        return str(j.domain.error_msg) if j.domain.error_msg else ""
+        return ", ".join(j.domain.error_msg)

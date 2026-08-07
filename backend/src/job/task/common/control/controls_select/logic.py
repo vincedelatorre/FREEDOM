@@ -33,6 +33,8 @@ class Logic(abstract.statement.Logic[Domain]):
                 self.domain.command.append(command.Button(label, label))
             while self._var.value is None:
                 await asyncio.sleep(0)
+        except:
+            self.domain.command.clear()
         finally:
             self._map.clear()
 
@@ -44,6 +46,7 @@ class Logic(abstract.statement.Logic[Domain]):
         if cmd in self._map:
             self._logger.info(f"controls_select: selected {cmd}")
             self._var.value = self._map[cmd]
-            self.domain.command[0] = command.Text(cmd)
+            self.domain.command.clear()
+            self.domain.command.append(command.Text(cmd))
         else:
             await super().exec_command(cmd)

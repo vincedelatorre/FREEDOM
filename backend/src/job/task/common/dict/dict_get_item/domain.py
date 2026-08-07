@@ -13,9 +13,11 @@ class Domain(abstract.value.Domain):
         type (str): ブロック種類
         id (str): ブロックID
         DICT (abstract.value.Domain): 処理対象
+        MODE (str): 処理方法
         KEY (abstract.value.Domain): 索引
     """
     DICT: abstract.value.Domain = dataclasses.field(default_factory=abstract.value.Domain)
+    MODE: str = "GET"
     KEY: abstract.value.Domain = dataclasses.field(default_factory=abstract.value.Domain)
 
     @classmethod
@@ -30,12 +32,20 @@ class Domain(abstract.value.Domain):
             "type": "dict_get_item",
             "tooltip": "辞書から索引の値を取得します",
             "helpUrl": "",
-            "message0": "%1 の索引 %2",
+            "message0": "%1 %2 索引： %3",
             "args0": [
                 {
                     "type": "input_value",
                     "name": "DICT",
                     "check": "Dict"
+                },
+                {
+                    "type": "field_dropdown",
+                    "name": "MODE",
+                    "options": [
+                        ['%{BKY_LISTS_GET_INDEX_GET}', 'GET'],
+                        ['%{BKY_LISTS_GET_INDEX_GET_REMOVE}', 'GET_REMOVE']
+                    ]
                 },
                 {
                     "type": "input_value",

@@ -109,7 +109,7 @@ const DICT_CREATE_WITH_MUTATOR_MIXIN = {
       for (let index = 0; index < this.itemCount_; index++) {
         this.appendValueInput('KEY' + index)
           .setAlign(Blockly.inputs.Align.RIGHT)
-          .appendField(index === 0 ? '辞書を作成:' : '')
+          .appendField(index === 0 ? '辞書を作成：' : '')
           .appendField('索引');
         this.appendValueInput('VALUE' + index)
           .setAlign(Blockly.inputs.Align.RIGHT)

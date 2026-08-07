@@ -507,7 +507,7 @@
         "usernameRequired": "ユーザ名を入力してください",
         "passwordRequired": "パスワードを入力してください",
         "newPasswordRequired": "新しいパスワードを入力してください",
-        "passwordTooShort": "パスワードは6文字以上で入力してください",
+        "passwordTooShort": "パスワードは1文字以上で入力してください",
         "roleRequired": "ロールを選択してください"
       },
       "busy": {

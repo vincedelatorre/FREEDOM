@@ -17,4 +17,7 @@ class Logic(abstract.value.Logic[Domain]):
         """タスク実行"""
         _dict:dict = await self._DICT.exec()
         key = await self._KEY.exec()
-        return _dict.get(key)
+        if self.domain.MODE == "GET":
+            return _dict.get(key)
+        elif self.domain.MODE == "GET_REMOVE":
+            return _dict.pop(key, None)
