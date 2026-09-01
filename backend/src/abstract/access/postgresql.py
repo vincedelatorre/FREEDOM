@@ -50,7 +50,7 @@ class PostgreSQL[D:abstract.database.Domain](abc.ABC):
     async def _connect(self):
         """接続"""
         try:
-            self._pool = await asyncpg.create_pool(dsn=self._domain.dsn, init=self._init_connection)
+            self._pool = await asyncpg.create_pool(dsn=self._domain.dsn, init=self._init_connection, min_size=1)
             self._logger.info(f"connect: {self._domain.dsn}")
         except Exception:
             return

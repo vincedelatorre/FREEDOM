@@ -6,13 +6,14 @@
 "use client";
 import React, { memo, useMemo, useEffect, useState, useCallback } from "react";
 import { Popup, useMap } from "react-map-gl/maplibre";
-import maplibregl from "maplibre-gl";
+import * as maplibregl from 'maplibre-gl';
 import { useTheme } from "@mui/material/styles";
 import { useTranslations } from "next-intl";
 import StatusChip from "@/components/map/StatusChip";
 import { clampMapStatus, getMapStatusColor } from "@/components/map/statusColors";
 import { MAP_Z_INDEX } from "@/components/map/mapZIndex";
 import { computeNodeMarkerPriority, getNodePopupPriorityBase } from "@/components/map/mapPriority";
+import type { GetFolderFilesResponse } from "@/types/api/files";
 import type { NodeMarkerItem } from "@/types/map";
 
 export interface NodeMarkersProps {
@@ -22,10 +23,6 @@ export interface NodeMarkersProps {
   selectedName?: string | null;
   onMarkerClick?: (name: string) => void;
   centerOnSelect?: boolean;
-}
-
-function sanitizeDomain(domain?: string): string {
-  return encodeURIComponent(domain?.trim() || "default");
 }
 
 const POPUP_MESSAGE_FONT_SIZE_PX = 14;
@@ -79,13 +76,12 @@ function useAvailableIconUrlSet() {
       try {
         const res = await fetch("/api/files/icons", { cache: "no-store" });
         if (!res.ok) return;
-        const files: string[] = await res.json();
+        const data: GetFolderFilesResponse = await res.json();
         if (disposed) return;
 
         const next = new Set<string>();
-        for (const file of files) {
-          next.add(`/icons/${file}`);
-          next.add(`/icons/${encodeURIComponent(file)}`);
+        for (const file of data.files) {
+          next.add(file.filename);
         }
         setIconUrlSet(next);
       } catch {
@@ -117,6 +113,7 @@ type NodeMarkerProps = {
 const NodeMarker = memo(function NodeMarker({
   name, lat, lng, status, domain, info, showLabel = true, onClick, iconUrlSet,
 }: NodeMarkerProps) {
+  const [ primaryUrl, setPrimaryUrl ] = useState<string | null>(null);
   const theme = useTheme();
   const { current: mapRef } = useMap();
   const tMap = useTranslations("Map");
@@ -125,15 +122,30 @@ const NodeMarker = memo(function NodeMarker({
   const tRobot = useTranslations("Node.robot");
 
   const primaryBase = useMemo(() => {
-    return `/icons/${sanitizeDomain(domain)}.${clampMapStatus(status)}`;
+    return `${domain}.${clampMapStatus(status)}`;
   }, [domain, status]);
 
-  const primaryUrl = useMemo(() => {
+  useEffect(() => {
     const prefix = `${primaryBase}.`;
     for (const url of iconUrlSet) {
-      if (url.startsWith(prefix)) return url;
+      if (url.startsWith(prefix)) {
+        (async () => {
+          try {
+            const res = await fetch(`/api/files/icons/${url}`);
+            if (!res.ok) return;
+            setPrimaryUrl(URL.createObjectURL(await res.blob()));
+          } catch (error) {
+            console.error(error);
+          }
+          return;
+        })();
+        return;
+      }
     }
-    return null;
+    setPrimaryUrl(null);
+    return () => {
+      if (primaryUrl) URL.revokeObjectURL(primaryUrl);
+    };
   }, [primaryBase, iconUrlSet]);
 
   // ラベル色

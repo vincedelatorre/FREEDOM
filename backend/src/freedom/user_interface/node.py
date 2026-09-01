@@ -57,7 +57,7 @@ class Node:
                 # PostgreSQL起動時のみCasbin防御を有効化
                 app = web.Application(middlewares=[cors_middleware(origins=self.domain.origin), authz_middleware])
                 auth_db_url = conf.main.dsn
-                app["auth_pool"] = await asyncpg.create_pool(dsn=auth_db_url)
+                app["auth_pool"] = await asyncpg.create_pool(dsn=auth_db_url, min_size=1)
                 async with app["auth_pool"].acquire() as conn:
                     async with conn.transaction():
                         # Better Auth用スキーマ（schemaのみ作成。テーブル群はBetter Auth migrateで作成）

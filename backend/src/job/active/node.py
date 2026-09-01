@@ -97,7 +97,7 @@ class Node(abstract.Node):
         self._task.cancel()
         self._logger.info("cancel")
 
-    async def exec_command(self, command, id:str=None):
+    async def exec_command(self, command, id:str|None=None):
         """コマンド実行
         Args:
             command (Any): コマンド内容
@@ -114,6 +114,7 @@ class Node(abstract.Node):
             self._logger.info(f"exec_command: {command=} {id=}")
         except Exception as e:
             self.domain.error_msg.add(str(e))
+            raise
         return ret
 
     def retrieve_variables(self, **kwargs):
@@ -130,10 +131,10 @@ class Node(abstract.Node):
             if all(v==getattr(var,k,None) for k,v in kwargs.items()):
                 yield var
 
-    async def accept_infrastructure(self, task:job.task.abstract.statement.Logic=None) -> bool|None:
+    async def accept_infrastructure(self, task:job.task.abstract.statement.Logic|None=None) -> bool|None:
         """インフラ連携結果取得
         Args:
-            task (job.task.abstract.statement.Logic, optional): タスク 再帰呼び出し用
+            task (job.task.abstract.statement.Logic|None): タスク 再帰呼び出し用
         Returns:
             bool|None: インフラ連携結果
         """

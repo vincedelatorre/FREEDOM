@@ -11,6 +11,7 @@ import { Stack, Button, Dialog, DialogActions, DialogTitle, DialogContent, Typog
 import { Close, Map as MapIcon } from "@mui/icons-material";
 import { useNotifications } from '@toolpad/core/useNotifications';
 import { MapImageFormResponse } from "@/types/config";
+import type { GetFolderFilesResponse } from "@/types/api/files";
 import { FormProps } from "@/components/config/forms";
 import { ImageResponse } from '@/components/map/MapImage';
 import MapLayerPanel from "@/components/map/MapLayerPanel";
@@ -45,36 +46,41 @@ export default function MapImageForm({ name, form, disabled }: FormProps<MapImag
 
     const update = async () => {
       // 画像アップロード
-      files.forEach(async ({file}) => {
+      if (files.length > 0) {
         const formData = new FormData();
-        formData.append('file', file);
+        files.forEach(({file}) => {
+          formData.append('files', file);
+        })
         const res = await fetch(`/api/files/map_images`, {
-          method: 'PUT',
+          method: 'POST',
           body: formData,
         });
         if (!res.ok) {
           const data = await res.json().catch(() => ({}));
           throw new Error(data.error ?? 'Failed to update image file');
         }
-      })
+      }
       // 画像削除
       const imageNames = images.map((image) => image.name)
       const res = await fetch(`/api/files/map_images`, { cache: 'no-store' });
+      if (res.status === 404) return;
       if (!res.ok) throw new Error('Failed to get image file');
       if (disposed) return
-      const data:string[] = await res.json();
-      data
-        .filter((file) => !imageNames.includes(file))
-        .forEach(async (file) => {
-          const res = await fetch(
-            `/api/files/map_images?file=${encodeURIComponent(file)}`,
-            { method: 'DELETE' }
-          );
-          if (!res.ok) {
-            const data = await res.json().catch(() => ({}));
-            throw new Error(data.error ?? 'Failed to delete image file');
-          }
-        })
+      const data:GetFolderFilesResponse = await res.json();
+      await Promise.all(
+        data.files
+          .filter((file) => !imageNames.includes(file.filename))
+          .map(async (file) => {
+            const res = await fetch(
+              `/api/files/map_images/${file.filename}`,
+              { method: 'DELETE' }
+            );
+            if (!res.ok) {
+              const data = await res.json().catch(() => ({}));
+              throw new Error(data.error ?? 'Failed to delete image file');
+            }
+          })
+      );
     };
     update()
       .then(() => {

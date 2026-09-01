@@ -1,8 +1,8 @@
 # FREEDOM Installation Guide
 This guide walks you through installing FREEDOM in a local environment.
-Adjust the settings as needed to fit your environment.  
+Adjust the settings as needed to fit your environment.
 All examples below use Windows.
-For macOS/Linux, replace `\` with `/` and adjust commands accordingly.  
+For macOS/Linux, replace `\` with `/` and adjust commands accordingly.
 
 ## 1. Install Required Software
 ### 1.1. Install Python 3.13.3
@@ -28,7 +28,7 @@ In this guide, we use **v24.18.0**, which is a version we have verified to work 
    ```
 4. If `v24.18.0` is displayed, the installation was successful.
 
-### 1.3. Install and Configure PostgreSQL
+### 1.3. Install and Configure PostgreSQL 16 or Later
 1. Download the installer from [PostgreSQL: Downloads](https://www.postgresql.org/download/).
 2. Run the installer.
    - You can generally leave all options at their default values.
@@ -119,13 +119,6 @@ user_interface = freedom.user_interface.Domain(
 - To allow access from another device:
   `http://<IP address of the PC running FREEDOM>:3000`
 
-### 3.4. Set FREEDOM Environment Variables for the Frontend
-Open `freedom/frontend/.env.development` and edit the following variable:
-```env
-BACKEND_BASE_URL=http://localhost:8080
-```
-- Replace `http://localhost:8080` with the same `ip` and `port` you set in step **3.3**.
-
 ## 4. Initial Setup of User Authentication (Better Auth)
 ### 4.1. Start the Backend
 1. Move to the project root.
@@ -144,7 +137,7 @@ BACKEND_BASE_URL=http://localhost:8080
 
 ### 4.2. Create a `.env` File for the Frontend
 1. Move to the `frontend` directory.
-2. Copy `.env.example` to `.env`.  
+2. Copy `.env.example` to `.env`.
    `.env.example` contains the following entries:
    ```env
    # Auth Secret (cookie signing)
@@ -153,6 +146,10 @@ BACKEND_BASE_URL=http://localhost:8080
    DATABASE_URL=postgresql://user:password@host:port/dbname?options=-c%20search_path%3Dauth
    # Better Auth (Next.js side)
    BETTER_AUTH_URL=http://localhost:3000
+   # Next.js BFF -> Backend (aiohttp)
+   BACKEND_BASE_URL=http://localhost:8080
+   # Frontend -> Next.js BFF
+   NEXT_PUBLIC_API_URL=/api/bff
    ```
 
 ### 4.3. Generate the Auth Secret
@@ -168,26 +165,38 @@ Copy and save the generated string.
 
 ### 4.4. Configure `.env`
 Set the necessary values in the `.env` file you created:
+The environment variables in this `.env` file are used with `npm run dev`, `npm run build`, and `npm run start`.
 ```env
 BETTER_AUTH_SECRET=generated_string
 DATABASE_URL=postgresql://user:password@host:port/dbname?options=-c%20search_path%3Dauth
 BETTER_AUTH_URL=http://localhost:3000
+BACKEND_BASE_URL=http://localhost:8080
+NEXT_PUBLIC_API_URL=/api/bff
 ```
 #### Example
 ```env
 BETTER_AUTH_SECRET=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 DATABASE_URL=postgresql://postgres:password@localhost:5432/freedom_db?options=-c%20search_path%3Dauth
 BETTER_AUTH_URL=http://localhost:3000
+BACKEND_BASE_URL=http://localhost:8080
+NEXT_PUBLIC_API_URL=/api/bff
 ```
 #### Field Descriptions
 - `BETTER_AUTH_SECRET`
-  Set the string generated in step **4.2**.
+   Set the string generated in step **4.3**.
 - `DATABASE_URL`
   PostgreSQL connection string used by Better Auth.
   You must include `?options=-c%20search_path%3Dauth`.
 - `BETTER_AUTH_URL`
   The public URL of the frontend.
   Use the same value you set as `origin` in step **3.3**.
+- `BACKEND_BASE_URL`
+   The URL used by the Next.js BFF to connect to the backend.
+   Use the backend `ip` and `port` values.
+   Replace the `http://localhost:8080` part with the same `ip` and `port` you set in step **3.3**.
+- `NEXT_PUBLIC_API_URL`
+   The URL used by the frontend to connect to the Next.js BFF.
+   Normally, leave it set to `/api/bff`.
 
 ### 4.5. Run Better Auth Migrations
 With the backend still running, open a **separate terminal** and do the following:
@@ -197,13 +206,13 @@ With the backend still running, open a **separate terminal** and do the followin
    ```
 2. Run the Better Auth migration:
    ```bash
-   C:\your-directory\freedom\frontend> npx auth@latest migrate --config src/lib/auth.ts
+   C:\your-directory\freedom\frontend> npx auth@~1.7 migrate --config src/lib/auth.ts
    ```
    - The tables used by Better Auth are created by this migration.
    - If the following message appears, enter `y`.
       ```bash
       Need to install the following packages:
-      auth@1.6.3
+      auth@1.7.xx
       Ok to proceed? (y)
       ```
       ```bash
@@ -234,7 +243,8 @@ With the backend still running, open a **separate terminal** and do the followin
    ```
 
 ## 5. Start FREEDOM
-If you have already started the backend and frontend in Step 4, this step is not required. Please proceed to Step 6.
+If you have already started the backend in Step 4, you can skip starting the backend in Step 5.1.
+Proceed to Step 5.2 to start the frontend.
 ### 5.1. Start the Backend
 1. Move to the project root.
 2. Activate the virtual environment.
@@ -250,30 +260,50 @@ If you have already started the backend and frontend in Step 4, this step is not
    - If you see logs like `2026-02-27,17:22:25.740,src.freedom.log,INFO,"launch"...`, the backend has started successfully.
 
 ### 5.2. Start the Frontend
+The frontend can be started in development mode or after building it.
+
+#### Start in the development environment
 1. Open another terminal if needed.
 2. Move to the `frontend` directory.
    ```bash
    C:\your-directory\freedom> cd .\frontend\
    ```
-3. Start the frontend:
+3. Start the frontend.
    ```bash
    C:\your-directory\freedom\frontend> npm run dev
    ```
-   If you specified a port other than 3000 as `origin` in step **3.3**, start it like this:
+
+#### Build and start the frontend
+1. Move to the `frontend` directory.
    ```bash
-   C:\your-directory\freedom\frontend> next dev -p 4000
+   C:\your-directory\freedom> cd .\frontend\
    ```
-4. If you see output like the following, the frontend has started successfully:
+2. Build the frontend.
    ```bash
-   > frontend@0.1.0 dev
-   > next dev
-   ▲ Next.js 15.5.12
-   - Local:        http://localhost:3000
-   - Network:      http://172.16.0.1:3000
-   - Environments: .env.development
-   ✓ Starting...
-   ✓ Ready in 18.8s
+   C:\your-directory\freedom\frontend> npm run build
    ```
+3. After the build completes, start the frontend.
+   ```bash
+   C:\your-directory\freedom\frontend> npm run start
+   ```
+
+- Before running `npm run build` and `npm run start`, set the required environment variables in the `.env` file from step **4.4**.
+- `npm run build` builds the frontend, and `npm run start` starts the built frontend.
+- The backend must also be running when starting the frontend after a build.
+
+To change the frontend port in development, run:
+```bash
+C:\your-directory\freedom\frontend> npm run dev -- -p 4000
+```
+To change the frontend port when starting after a build, run:
+```bash
+C:\your-directory\freedom\frontend> npm run start -- -p 4000
+```
+
+When changing the port, also use the new port in the `origin` in step **3.3** and `BETTER_AUTH_URL` in step **4.4**.
+
+After starting the frontend, access the URL specified as `origin` in step **3.3**.
+If the URL is accessible, the frontend has started successfully.
 
 ## 6. Verify Operation
 ### 6.1. Check the FREEDOM UI
@@ -283,9 +313,14 @@ If you have already started the backend and frontend in Step 4, this step is not
 > After starting the frontend, you can also open the screen by holding **Ctrl** and clicking the `Local` URL shown in the terminal.
 
 ### 6.2. Check the Login Screen
-1. In your browser, open:
+1. In your browser, access the URL specified as `origin` in step **3.3**.
+   Append `/login` to the end of the URL.
    ```text
    http://localhost:3000/login
+   ```
+   If you changed the port to 4000, use:
+   ```text
+   http://localhost:4000/login
    ```
 2. Log in with the following credentials:
    ```text
@@ -306,7 +341,7 @@ For security reasons, change the password after your first login.
 - Go to the admin user management page.
 - Update the password from **“Change Password”** for the target user.
 > **Note**
-> Set the new password for the initial admin user to a length between **6 and 128 characters**.
+> Set the new password for the initial admin user to a length between **1 and 128 characters**.
 
 ## 7. Important Notes
 Perform the **initial setup** in the following order:
@@ -318,4 +353,6 @@ Start backend
 ```
 - If the backend has not been started at least once, the tables required for user authentication will not exist, and subsequent steps may fail.
 - If you encounter import errors when starting the backend, check whether all required libraries have been installed.
-- If errors occur when running the frontend or migrations, verify the values of `DATABASE_URL`, `BETTER_AUTH_SECRET`, and `BETTER_AUTH_URL` in your `.env` file.
+- If errors occur when running the frontend or migrations, verify the values of
+   `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `BACKEND_BASE_URL`,
+   and `NEXT_PUBLIC_API_URL` in your `.env` file.

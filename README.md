@@ -21,11 +21,11 @@
 FREEDOM is a fleet management and orchestration platform for AMRs and other transport robots, designed to seamlessly coordinate robot operations with plant infrastructure systems.
 In addition to typical Warehouse Control System (WCS) capabilities, FREEDOM provides the following features:
 
-- **Unified Portal**  
+- **Unified Portal**
    By integrating various robot APIs, FREEDOM enables control of multiple robot types with different coordinate systems. FREEDOM provides a unified dashboard that visualizes the status of all equipment in real time, improving operational efficiency for on-site workers.
-- **Job Creator**  
+- **Job Creator**
    Users can create a sequence (job) consisting of multiple tasks via the Web UI, enabling on-site workers to independently implement Kaizen (continuous improvement).
-- **Infrastructure-linked zones**  
+- **Infrastructure-linked zones**
    Users can draw zones on the Web UI that are linked to internal traffic infrastructure devices such as signal lamps or shutters, specifying where these devices should be triggered. This function makes on-site adjustment easier.
 
 <br>
@@ -41,20 +41,20 @@ In addition to typical Warehouse Control System (WCS) capabilities, FREEDOM prov
 ## Terminology
 This project defines the following terms to avoid ambiguity.
 
-- **Repository**  
+- **Repository**
    A logical unit representing a functional category within FREEDOM.
-   It corresponds to the directory structure `backend/src/<repository>/`.  
-   This concept is inspired by the Repository pattern used in Domain-Driven Design (DDD) and Clean Architecture, and is defined as a unit for grouping related functionality.  
+   It corresponds to the directory structure `backend/src/<repository>/`.
+   This concept is inspired by the Repository pattern used in Domain-Driven Design (DDD) and Clean Architecture, and is defined as a unit for grouping related functionality.
    The five repositories are: `freedom`, `job`, `robot`, `infrastructure`, and `equipment`.
 
-- **Node**  
+- **Node**
    An execution unit (service or functional module) with a specific responsibility.
-   It corresponds to the directory structure `backend/src/<repository>/<node>/`.  
+   It corresponds to the directory structure `backend/src/<repository>/<node>/`.
    For example, `backend/src/robot/dummy` represents the `dummy` node that belongs to the `robot` repository.
 
-**Note:**  
-The term "repository" in this project does **not** refer to a GitHub repository (a remote code management unit), but rather to a functional category within FREEDOM.  
-While the concept is inspired by the Repository pattern in DDD and Clean Architecture, it does not represent a data access layer itself.  
+**Note:**
+The term "repository" in this project does **not** refer to a GitHub repository (a remote code management unit), but rather to a functional category within FREEDOM.
+While the concept is inspired by the Repository pattern in DDD and Clean Architecture, it does not represent a data access layer itself.
 In this README, when referring to a repository hosted on GitHub, the term **"GitHub repository"** will be used explicitly.
 
 ## System Architecture
@@ -88,7 +88,7 @@ For example, to integrate your new AMR into FREEDOM, you need to implement a cus
 | [equipment/plc](backend/src/equipment/plc) | PLC integration |
 | [equipment/database](backend/src/equipment/database) | Database integration |
 
-(*1) IoT Data Share is a product provided by DENSO WAVE INCORPORATED.  
+(*1) IoT Data Share is a product provided by DENSO WAVE INCORPORATED.
 This project includes an interface for accessing the Web API provided by IoT Data Share. However, this project does not incorporate, bundle, modify, or redistribute IoT Data Share itself or any software components constituting the product.
 Furthermore, this project is not developed, provided, or supported by DENSO WAVE INCORPORATED, nor does it imply any approval, endorsement, or warranty by DENSO WAVE INCORPORATED with respect to this project.
 Any use of IoT Data Share is subject to the contractual terms and conditions and any other applicable terms of use separately established for that product.
@@ -120,7 +120,7 @@ In the meantime:
 - Explore each repository for example implementations
 
 ## License
-This project is licensed under the [Apache License, Version 2.0](LICENSE).  
+This project is licensed under the [Apache License, Version 2.0](LICENSE).
 This License applies solely to FREEDOM released under this project.
 Any version of FREEDOM developed on or before December 31, 2025 (the "Prior Version") is excluded from the scope of this License.
 For the avoidance of doubt, this License neither modifies nor affects any contract, license, or other terms and conditions previously established with respect to the Prior Version.

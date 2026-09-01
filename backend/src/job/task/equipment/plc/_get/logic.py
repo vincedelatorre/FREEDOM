@@ -8,7 +8,7 @@ from src.job.task.equipment.plc._get import Domain
 
 
 class Logic(abstract.value.Logic[Domain]):
-    """EquipmentPLC変数取得タスク処理"""
+    """PLC変数取得タスク処理"""
     async def init(self):
         """ジョブ開始・復帰時処理"""
         await super().init()

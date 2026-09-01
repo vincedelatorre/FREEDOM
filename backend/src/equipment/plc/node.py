@@ -5,7 +5,7 @@ import asyncio
 
 from src import abstract, freedom, job, util
 from src.repository import repository
-from src.equipment.plc import NodeDomain, BitAddress, HeartbeatAddress, Interface, access
+from src.equipment.plc import NodeDomain, BitAddress, CycleBitAddress, Interface, access
 
 
 class Node(abstract.Node):
@@ -13,7 +13,7 @@ class Node(abstract.Node):
     Attributes:
         domain (NodeDomain): ドメイン
         _state (util.status.State): 状態
-        _address_map (dict[BitAddress, set[str]]): アドレスとジョブIDのマッピング
+        _address_map (dict[str, set[str]]): アドレスとジョブIDのマッピング
         _logger (freedom.log.Logger): ロガー
         _access (Interface): インターフェース
         _task (asyncio.Task): 定期処理タスク
@@ -83,7 +83,9 @@ class Node(abstract.Node):
         for address in self.domain.bit_addresses + self.domain.word_addresses:
             if address.name == name:
                 if isinstance(address, BitAddress):
-                    if job_id is None and address.default == data:
+                    if type(self._access) is not access.Dummy and address.default is None:
+                        raise RuntimeError(f"BitAddress {name=} is read-only")
+                    elif job_id is None and address.default == data:
                         self._address_map[address.name].clear()
                     elif job_id and address.default is not None:
                         job_ids = self._address_map[address.name]
@@ -132,7 +134,9 @@ class Node(abstract.Node):
             for name, job_ids in self._address_map.items():
                 if not job_ids:
                     continue
-                for address in self.domain.bit_addresses + self.domain.word_addresses:
+                for address in self.domain.bit_addresses:
+                    if address.default is None:
+                        continue
                     if address.name == name:
                         job_ids = {job_id for job_id in job_ids if repository.retrieve(job.active.Node, id=job_id)}
                         self._address_map[name] = job_ids
@@ -151,12 +155,14 @@ class Node(abstract.Node):
                 self._logger.error(f"Failed to update: {type(e)} - {e}")
             self._state = util.status.State.DISCONNECT
 
-    async def _heartbeat_loop(self, address:HeartbeatAddress):
+    async def _heartbeat_loop(self, address:CycleBitAddress):
         """ハートビート処理"""
-        try:
-            while True:
+        while True:
+            try:
                 data = await self._access.read_bit(address.address, address.bit)
                 await self._access.write_bit(address.address, address.bit, not data)
-                await asyncio.sleep(address.interval)
-        finally:
-            self._logger.info(f"{address.name} heartbeat end")
+            except Exception as e:
+                if self._state != util.status.State.DISCONNECT:
+                    self._logger.error(f"Failed to update: {type(e)} - {e}")
+                self._state = util.status.State.DISCONNECT
+            await asyncio.sleep(address.interval)

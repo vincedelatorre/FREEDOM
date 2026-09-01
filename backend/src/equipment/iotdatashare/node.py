@@ -31,8 +31,10 @@ class Node(abstract.Node):
         """更新ループ"""
         try:
             while sys.getrefcount(self) > 2:
-                await self._update()
-                await asyncio.sleep(self.domain.update_cycle)
+                await asyncio.gather(
+                    self._update(),
+                    asyncio.sleep(self.domain.update_cycle),
+                )
         finally:
             await self._session.close()
             self._logger.info("close")

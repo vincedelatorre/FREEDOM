@@ -33,8 +33,10 @@ class Repository(repository.Repository[Node]):
         await self._init_node()
         try:
             while sys.getrefcount(self) > 2:
-                await self._update()
-                await asyncio.sleep(0)
+                await asyncio.gather(
+                    self._update(),
+                    asyncio.sleep(0),
+                )
         finally:
             for node in self.data:
                 node.cancel()

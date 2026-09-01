@@ -159,6 +159,7 @@
       "plc": {
         "name": "PLC",
         "state": {
+          "0": "切断",
           "1": "待機",
           "3": "動作中",
           "5": "異常"
@@ -179,13 +180,14 @@
           "status": "現在値",
           "action": "手動操作",
           "empty": "データなし",
-          "error_message": "0以上の整数のみ入力できます"
+          "readOnly": "読取り専用",
+          "errorMessage": "0以上の整数のみ入力できます"
         },
         "button": {
           "on": "ON",
           "off": "OFF",
           "write": "書込み",
-          "write_word": "ワード書込み {value}"
+          "writeWord": "ワード書込み {value}"
         }
       }
     },

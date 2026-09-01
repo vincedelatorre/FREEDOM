@@ -5,19 +5,19 @@
 
 import { Controller, useFormContext } from "react-hook-form";
 import { useTranslations } from "next-intl";
-import { FormControl, FormHelperText, InputLabel, MenuItem, Select } from "@mui/material";
-import { SelectFormResponse } from "@/types/config";
+import { Box, Chip, FormControl, FormHelperText, InputLabel, MenuItem, Select } from "@mui/material";
+import { MultiSelectFormResponse } from "@/types/config";
 import { FormProps } from "@/components/config/forms";
 
 
 /**
- * 選択入力フォーム
+ * 複数選択入力フォーム
  * @param name 設定名
  * @param form 設定内容
  * @param disabled 無効
  * @param validate 検証イベント
  */
-export default function SelectForm({ name, form, disabled, validate }: FormProps<SelectFormResponse>) {
+export default function MultiSelectForm({ name, form, disabled, validate }: FormProps<MultiSelectFormResponse>) {
   const { control } = useFormContext();
   const translate = useTranslations("Config");
 
@@ -36,9 +36,24 @@ export default function SelectForm({ name, form, disabled, validate }: FormProps
           </InputLabel>
           <Select
             {...field}
-            value={Object.entries(form.items).find(([, v]) => v === field.value)?.[0]}
-            onChange={(e) => field.onChange(form.items[e.target.value])}
+            multiple
+            value={Array.isArray(field.value) ? field.value.map(v => Object.entries(form.items).find(([, val]) => val === v)?.[0]) : []}
+            onChange={(e) => {
+              const value = typeof e.target.value === 'string' ? e.target.value.split(',') : e.target.value;
+              field.onChange(
+                value
+                  .filter((v): v is string => typeof v === "string")
+                  .map(v => form.items[v]),
+              );
+            }}
             inputRef={ref}
+            renderValue={(selected) => (
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                {selected.map((value) => (
+                  <Chip key={value} label={value} />
+                ))}
+              </Box>
+            )}
             labelId={`${name}-label`}
             id={name}
             label={form.label}

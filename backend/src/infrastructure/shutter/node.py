@@ -28,8 +28,10 @@ class Node(infrastructure.Node):
         """定期ループ処理"""
         try:
             while sys.getrefcount(self) > 2:
-                await asyncio.sleep(self.domain.update_cycle)
-                await self._update()
+                await asyncio.gather(
+                    asyncio.sleep(self.domain.update_cycle),
+                    self._update(),
+                )
         finally:
             await self._access.close()
             self._logger.info("end")
@@ -39,7 +41,10 @@ class Node(infrastructure.Node):
         try:
             # 連携確認
             if self._related_robot:
-                self._related_robot = {r for r in self._related_robot if r.job and util.map._is_inside(r.domain.location, self.domain.area_list)}
+                for r in list(self._related_robot):
+                    if not r.job or not util.map._is_inside(r.domain.location, self.domain.area_list):
+                        self._related_robot.remove(r)
+                        self._logger.info(f"exit: robot={r.domain.name}")
                 if not self._related_robot:
                     await self._access.write(False)
                     self._state = util.status.State.WAITING
@@ -50,6 +55,8 @@ class Node(infrastructure.Node):
                     self._logger.info("open")
                 self._state = util.status.State.ACTIVE
             else:
+                if self._state != util.status.State.WAITING:
+                    self._logger.info("close")
                 self._state = util.status.State.WAITING
                 if self._related_robot:
                     await self._access.write(True)

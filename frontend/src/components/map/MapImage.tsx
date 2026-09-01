@@ -6,7 +6,7 @@
 "use client";
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Source, Layer, useMap } from "react-map-gl/maplibre";
-import type maplibregl from "maplibre-gl";
+import * as maplibregl from 'maplibre-gl';
 
 /** === 型定義 === */
 export interface ImageResponse {
@@ -43,7 +43,6 @@ type Props = {
 
 /** === ユーティリティ === */
 const toLngLat = ([lat, lng]: LatLng) => [lng, lat] as [number, number];
-const toMapImageUrl = (name: string) => `/map_images/${encodeURIComponent(name)}`;
 function toImageSourceCoordinates(corners?: Props["corners"]) {
   if (!corners || corners.length !== 4) return undefined;
   const [tl, tr, bl, br] = corners;
@@ -66,6 +65,7 @@ export default function MapLibreImage({
   onSelect,
   src,
 }: Props) {
+  const [ url, setUrl ] = useState<string | undefined>(src);
   const { current: mapRef } = useMap();
   const map = mapRef?.getMap();
 
@@ -94,10 +94,21 @@ export default function MapLibreImage({
     suppressSendRef.current = true;
   }, [corners]);
 
-  /** === 画像の自然サイズを読み取り（アスペクト比用） === */
+  /** === 画像と自然サイズを読み取り（アスペクト比用） === */
   const [imgSize, setImgSize] = useState<{ w: number; h: number } | null>(null);
   useEffect(() => {
-    const url = src ?? toMapImageUrl(name);
+    const fetchImage = async () => {
+      try {
+        const res = await fetch(`/api/files/map_images/${name}`);
+        if (!res.ok) return;
+        setUrl(URL.createObjectURL(await res.blob()));
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    if (!src) {
+      fetchImage();
+    }
     if (!url) return;
 
     let cancelled = false;
@@ -119,6 +130,9 @@ export default function MapLibreImage({
     im.src = url;
 
     return () => {
+      if (!src && url) {
+        URL.revokeObjectURL(url);
+      }
       cancelled = true;
     };
   }, [src, name]);
@@ -812,8 +826,8 @@ export default function MapLibreImage({
   return (
     <>
       {/* 画像ソース */}
-      {coordsForSource && (
-        <Source id={srcId} type="image" url={src ?? toMapImageUrl(name)} coordinates={coordsForSource} />
+      {url && coordsForSource && (
+        <Source id={srcId} type="image" url={url} coordinates={coordsForSource} />
       )}
       {/* ラスターレイヤ */}
       {coordsForSource && (!beforeId || beforeReady) && (

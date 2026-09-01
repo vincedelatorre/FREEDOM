@@ -11,10 +11,18 @@ from src.infrastructure.command import Button
 
 
 class Node(infrastructure.Node):
+    """ランプ ノード
+    Attributes:
+        domain (NodeDomain): ドメイン
+        _state (util.status.State): 状態
+        _access (Interface): インターフェース
+        _logger (freedom.log.Logger): ロガー
+        _task (asyncio.Task): 定期処理タスク
+    """
     def __init__(self, domain:NodeDomain):
-        """ランプ連携ノード
+        """インスタンス化
         Args:
-            domain (NodeDomain): 設定
+            domain (NodeDomain): ドメイン
         """
         self.domain = domain
         self._related_robot:set[robot.Node[robot.Domain]] = set()
@@ -28,8 +36,10 @@ class Node(infrastructure.Node):
         """定期ループ処理"""
         try:
             while sys.getrefcount(self) > 2:
-                await asyncio.sleep(self.domain.update_cycle)
-                await self._update()
+                await asyncio.gather(
+                    asyncio.sleep(self.domain.update_cycle),
+                    self._update(),
+                )
         finally:
             await self._access.close()
             self._logger.info("end")
@@ -39,20 +49,43 @@ class Node(infrastructure.Node):
         try:
             # 連携確認
             if self._related_robot:
-                self._related_robot = {r for r in self._related_robot if r.job and util.map._is_inside(r.domain.location, self.domain.area_list)}
+                for r in list(self._related_robot):
+                    if not r.job or not util.map._is_inside(r.domain.location, self.domain.area_list):
+                        self._related_robot.remove(r)
+                        self._logger.info(f"exit: robot={r.domain.name}")
                 if not self._related_robot:
-                    await self.turn_off()
+                    await self._turn_off()
             # 状態確認
             if await self._access.read(self.domain.write_address):
+                if self._state != util.status.State.ACTIVE:
+                    self._logger.info("on")
                 self._state = util.status.State.ACTIVE
             else:
+                if self._state != util.status.State.WAITING:
+                    self._logger.info("off")
                 self._state = util.status.State.WAITING
                 if self._related_robot:
-                    await self.turn_on()
+                    await self._turn_on()
         except Exception as e:
             if self._state != util.status.State.DISCONNECT:
                 self._logger.error(f"disconnect {type(e)} - {e}")
             self._state = util.status.State.DISCONNECT
+
+    async def _turn_on(self):
+        """点灯"""
+        if self._state == util.status.State.ACTIVE:
+            return
+        await self._access.write(self.domain.write_address, True)
+        self._state = util.status.State.ACTIVE
+        self._logger.info(f"turn on")
+
+    async def _turn_off(self):
+        """消灯"""
+        if self._state == util.status.State.WAITING:
+            return
+        await self._access.write(self.domain.write_address, False)
+        self._state = util.status.State.WAITING
+        self._logger.info(f"turn off")
 
     def fetch_status(self) -> util.status.Status:
         """状態取得
@@ -91,9 +124,12 @@ class Node(infrastructure.Node):
         if not robot.domain.location:
             return True
         if util.map._is_inside(robot.domain.location, self.domain.area_list):
-            await self.turn_on(robot)
+            if robot not in self._related_robot:
+                self._related_robot.add(robot)
+                self._logger.info(f"entry: robot={robot.domain.name}")
+            await self._turn_on()
         else:
-            await self.turn_off(robot)
+            await self.cancel(robot)
         return True
 
     async def cancel(self, robot:robot.Node[robot.Domain]) -> bool:
@@ -101,36 +137,21 @@ class Node(infrastructure.Node):
         Args:
             robot (robot.Node): ロボットノード
         """
-        await self.turn_off(robot)
-
-    async def turn_on(self, robot:robot.Node|None=None):
-        """点灯
-        Args:
-            robot (robot.Node|None): ロボットノード
-                Noneで強制点灯
-        """
         if robot in self._related_robot:
-            return
-        elif robot is not None:
-            self._related_robot.add(robot)
+            self._related_robot.remove(robot)
+            self._logger.info(f"exit: robot={robot.domain.name}")
+            if not self._related_robot:
+                await self._turn_off()
+        return True
+
+    async def turn_on(self):
+        """UI点灯"""
         await self._access.write(self.domain.write_address, True)
         self._state = util.status.State.ACTIVE
-        self._logger.info(f"turn on")
+        self._logger.info(f"user turn on")
 
-    async def turn_off(self, robot:robot.Node|None=None):
-        """消灯
-        Args:
-            robot (robot.Node|None): ロボットノード
-                Noneで強制消灯
-        """
-        if robot is None:
-            self._related_robot.clear()
-        elif robot in self._related_robot:
-            self._related_robot.remove(robot)
-            if self._related_robot:
-                return
-        else:
-            return
+    async def turn_off(self):
+        """UI消灯"""
         await self._access.write(self.domain.write_address, False)
         self._state = util.status.State.WAITING
-        self._logger.info(f"turn off")
+        self._logger.info(f"user turn off")

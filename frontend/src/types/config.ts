@@ -14,6 +14,7 @@ export type FormType =
   | "checkbox"
   | "radio"
   | "select"
+  | "multiSelect"
   | "color"
   | "location"
   | "area"
@@ -92,6 +93,14 @@ export interface RadioFormResponse extends BaseFormResponse {
 export interface SelectFormResponse extends BaseFormResponse {
   /** フォーム種類 */
   type: "select";
+  /** 選択内容 */
+  items: { [key: string]: any };
+}
+
+/** 複数選択入力フォーム内容 */
+export interface MultiSelectFormResponse extends BaseFormResponse {
+  /** フォーム種類 */
+  type: "multiSelect";
   /** 選択内容 */
   items: { [key: string]: any };
 }
@@ -194,6 +203,7 @@ export type FormResponseType =
   | CheckboxFormResponse
   | RadioFormResponse
   | SelectFormResponse
+  | MultiSelectFormResponse
   | ColorFormResponse
   | LocationFormResponse
   | AreaFormResponse

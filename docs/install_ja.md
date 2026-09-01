@@ -1,5 +1,5 @@
 # FREEDOMインストールガイド
-本ガイドはローカル環境での基本的なインストール手順を示しています。必要に応じて環境に合わせて設定内容を変更してください。  
+本ガイドはローカル環境での基本的なインストール手順を示しています。必要に応じて環境に合わせて設定内容を変更してください。
 また本ガイドはWindowsの例で説明しています。Mac / Linuxの場合はパス区切りを `/` に置き換えてください。
 
 ## 1. 必要なソフトウェアのインストール
@@ -26,7 +26,7 @@ FREEDOMのfrontend起動およびログイン機能のセットアップにはNo
    ```
 4. `v24.18.0` と表示されればインストール成功です。
 
-### 1.3. PostgreSQLのインストールと設定
+### 1.3. PostgreSQL 16以降のインストールと設定
 1. [PostgreSQL: Downloads](https://www.postgresql.org/download/) からインストーラをダウンロードします。
 2. インストーラを実行します。
    - 項目は基本的にデフォルト設定で問題ありません。
@@ -92,13 +92,13 @@ main = freedom.main.Domain(
 ```
 #### `dsn` の書式
 ```text
-postgresql://ユーザー名:パスワード@ホスト:ポート/データベース名
+postgresql://ユーザ名:パスワード@ホスト:ポート/データベース名
 ```
 #### 例
 ```text
 postgresql://postgres:password@localhost:5432/freedom_db
 ```
-- PostgreSQL のデフォルトユーザー名は通常 `postgres` です。
+- PostgreSQL のデフォルトユーザ名は通常 `postgres` です。
 
 ### 3.3. `user_interface` の設定を変更する
 同じ設定ファイル内の `user_interface` の項目を、利用環境に合わせて変更してください。
@@ -118,14 +118,6 @@ user_interface = freedom.user_interface.Domain(
 - 別端末からアクセスする場合
    `http://<FREEDOMを起動するPCのIPアドレス>:3000`
 
-### 3.4. frontendのFREEDOM用環境変数を設定する
-`freedom/frontend/.env.development` を開き、以下の変数を編集してください。
-```env
-BACKEND_BASE_URL=http://localhost:8080
-```
-- `http://localhost:8080` の部分は、手順 **3.3** で指定した `ip`、`port` と同じ値を入力します。
-
-
 ## 4. ユーザ認証機能（Better Auth）の初期設定
 ### 4.1. backendを起動する
 1. プロジェクトルートへ移動します。
@@ -134,7 +126,7 @@ BACKEND_BASE_URL=http://localhost:8080
    C:\～任意のディレクトリ～\freedom> .\backend\.venv\Scripts\activate
    ```
 3. backend を起動します。
-   `ファイル名` には、手順 **4.1** で `backend/config` 配下に作成した設定ファイル名を指定してください。
+   `ファイル名` には、手順 **3.1** で `backend/config` 配下に作成した設定ファイル名を指定してください。
    ※ `.py` は不要です。
    ```bash
    (.venv) C:\～任意のディレクトリ～\freedom> python .\backend\ ファイル名
@@ -147,7 +139,7 @@ BACKEND_BASE_URL=http://localhost:8080
    ```bash
    C:\～任意のディレクトリ～\freedom> cd .\frontend\
    ```
-2. `.env.example` を複製して `.env` を作成します。  
+2. `.env.example` を複製して `.env` を作成します。
    `.env.example` には、以下のような内容が記載されています。
    ```env
    # Auth Secret(Cookie署名)
@@ -156,6 +148,10 @@ BACKEND_BASE_URL=http://localhost:8080
    DATABASE_URL=postgresql://user:password@host:port/dbname?options=-c%20search_path%3Dauth
    # Better Auth(Next.js側)
    BETTER_AUTH_URL=http://localhost:3000
+   # Next.js BFF -> Backend (aiohttp)
+   BACKEND_BASE_URL=http://localhost:8080
+   # Frontend -> Next.js BFF
+   NEXT_PUBLIC_API_URL=/api/bff
    ```
 
 ### 4.3. Auth Secret を生成する
@@ -171,25 +167,37 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 
 ### 4.4. `.env` を設定する
 作成した `.env` に、必要な値を設定します。
+`npm run dev`、`npm run build`、`npm run start` のいずれを使用する場合も、 `.env` に設定した環境変数を使用します。
 ```env
 BETTER_AUTH_SECRET=生成した文字列
 DATABASE_URL=postgresql://user:password@host:port/dbname?options=-c%20search_path%3Dauth
 BETTER_AUTH_URL=http://localhost:3000
+BACKEND_BASE_URL=http://localhost:8080
+NEXT_PUBLIC_API_URL=/api/bff
 ```
 #### 設定例
 ```env
 BETTER_AUTH_SECRET=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 DATABASE_URL=postgresql://postgres:password@localhost:5432/freedom_db?options=-c%20search_path%3Dauth
 BETTER_AUTH_URL=http://localhost:3000
+BACKEND_BASE_URL=http://localhost:8080
+NEXT_PUBLIC_API_URL=/api/bff
 ```
 #### 各項目の説明
 - `BETTER_AUTH_SECRET`
-   手順 **4.2** で生成した文字列を設定します。
+   手順 **4.3** で生成した文字列を設定します。
 - `DATABASE_URL`
    Better Authが利用するPostgreSQL接続文字列です。
    必ず `?options=-c%20search_path%3Dauth` を含めて設定してください。
 - `BETTER_AUTH_URL`
    frontendの公開URLです。手順 **3.3** で `origin` に指定したURLと同じ値を入力します。
+- `BACKEND_BASE_URL`
+   Next.jsのBFFからbackendへ接続する接続先URLです。
+   backendの`ip`と`port`を使用して設定してください。
+   `http://localhost:8080` の部分は、手順 **3.3** で指定した `ip`、`port` と同じ値を入力します。
+- `NEXT_PUBLIC_API_URL`
+   frontendからNext.jsのBFFへ接続するURLです。
+   通常は `/api/bff` のまま設定してください。
 
 ### 4.5. Better Authのmigrateを実行する
 backendを起動したまま、**別のターミナル**を開いて以下を実行します。
@@ -199,13 +207,13 @@ backendを起動したまま、**別のターミナル**を開いて以下を実
    ```
 2. Better Auth の migrate を実行します。
    ```bash
-   C:\～任意のディレクトリ～\freedom\frontend> npx auth@latest migrate --config src/lib/auth.ts
+   C:\～任意のディレクトリ～\freedom\frontend> npx auth@~1.7 migrate --config src/lib/auth.ts
    ```
    - Better Auth 用のテーブルは、このmigrateによって作成されます。
    - 以下のメッセージが表示された場合は、 `y` を入力してください。
       ```bash
       Need to install the following packages:
-      auth@1.6.3
+      auth@1.7.xx
       Ok to proceed? (y)
       ```
       ```bash
@@ -236,7 +244,8 @@ backendを起動したまま、**別のターミナル**を開いて以下を実
    ```
 
 ## 5. FREEDOMを起動する
-既に手順4でbackendとfrondendを起動済みの場合は、この手順は不要です。手順6に進んでください。
+既に手順4でbackendを起動済みの場合は、手順5.1のbackend起動は不要です。
+手順5.2に進んでfrontendを起動してください。
 
 ### 5.1. backendを起動する
 1. プロジェクトルートへ移動します。
@@ -245,7 +254,7 @@ backendを起動したまま、**別のターミナル**を開いて以下を実
    C:\～任意のディレクトリ～\freedom> .\backend\.venv\Scripts\activate
    ```
 3. backend を起動します。
-   `ファイル名` には、手順 **4.1** で `backend/config` 配下に作成した設定ファイル名を指定してください。
+   `ファイル名` には、手順 **3.1** で `backend/config` 配下に作成した設定ファイル名を指定してください。
    ※ `.py` は不要です。
    ```bash
    (.venv) C:\～任意のディレクトリ～\freedom> python .\backend\ ファイル名
@@ -253,30 +262,50 @@ backendを起動したまま、**別のターミナル**を開いて以下を実
    - `2026-02-27,17:22:25.740,src.freedom.log,INFO,"launch"...` のようなログが表示されれば起動成功です。
 
 ### 5.2. frontendを起動する
+frontendは、開発環境で起動する方法と、build後に起動する方法があります。
+
+#### 開発環境で起動する場合
 1. 必要に応じて別のターミナルを開きます。
 2. `frontend` ディレクトリへ移動します。
    ```bash
    C:\～任意のディレクトリ～\freedom> cd .\frontend\
    ```
-3. frontend を起動します。
+3. frontendを起動します。
    ```bash
    C:\～任意のディレクトリ～\freedom\frontend> npm run dev
    ```
-   もし手順 **3.3** で `origin` に3000番以外のポート番号を指定した場合は、次のように起動します。
+
+#### buildして起動する場合
+1. `frontend` ディレクトリへ移動します。
    ```bash
-   C:\～任意のディレクトリ～\freedom\frontend> next dev -p 4000
+   C:\～任意のディレクトリ～\freedom> cd .\frontend\
    ```
-4. 以下のような表示が出れば起動成功です。
+2. frontendをbuildします。
    ```bash
-   > frontend@0.1.0 dev
-   > next dev
-   ▲ Next.js 15.5.12
-   - Local:        http://localhost:3000
-   - Network:      http://172.16.0.1:3000
-   - Environments: .env.development
-   ✓ Starting...
-   ✓ Ready in 18.8s
+   C:\～任意のディレクトリ～\freedom\frontend> npm run build
    ```
+3. build完了後、frontendを起動します。
+   ```bash
+   C:\～任意のディレクトリ～\freedom\frontend> npm run start
+   ```
+
+- `npm run build` および `npm run start` を実行する前に、手順 **4.4** の `.env` に必要な環境変数を設定してください。
+- `npm run build` はfrontendをbuildし、`npm run start` はbuild済みのfrontendを起動します。
+- buildして起動する場合も、backendを起動した状態にしてください。
+
+frontendのポート番号を変更する場合は、以下のように起動します。
+```bash
+C:\～任意のディレクトリ～\freedom\frontend> npm run dev -- -p 4000
+```
+buildして起動する場合は、以下のように起動します。
+```bash
+C:\～任意のディレクトリ～\freedom\frontend> npm run start -- -p 4000
+```
+
+ポート番号を変更する場合は、手順 **3.3** の `origin` および手順 **4.4** の `BETTER_AUTH_URL` にも、変更後のポート番号を指定してください。
+
+起動後、手順 **3.3** の `origin` に指定したURLへアクセスできれば、
+frontendの起動は成功です。
 
 ## 6. 動作確認を行う
 ### 6.1. FREEDOM画面の表示確認
@@ -286,9 +315,14 @@ backendを起動したまま、**別のターミナル**を開いて以下を実
 > frontend 起動後、ターミナルに表示される `Local` のURLを **Ctrl キーを押しながらクリック** することでも画面を開けます。
 
 ### 6.2. ログイン画面の確認
-1. ブラウザで以下のURLにアクセスします。
+1. 手順 **3.3** の `origin` に指定したURLへアクセスします。
+   URLの末尾に `/login` を追加してください。
    ```text
    http://localhost:3000/login
+   ```
+   ポートを4000番に変更した場合は、次のURLになります。
+   ```text
+   http://localhost:4000/login
    ```
 2. 以下の認証情報でログインします。
    ```text
@@ -309,7 +343,7 @@ backendを起動したまま、**別のターミナル**を開いて以下を実
 - 管理者用設定のユーザ管理にアクセスする
 - 対象ユーザの **「パスワード変更」** から更新する
 #### 注意
-- 初期管理者の新しいパスワードは **6～128文字** の範囲で設定してください。
+- 初期管理者の新しいパスワードは **1～128文字** の範囲で設定してください。
 
 ## 7. 注意事項
 **初回セットアップ**は、必ず以下の順番で実施してください。
@@ -321,4 +355,7 @@ backend起動
 ```
 - backendが初回起動していない状態では、ユーザ認証機能に必要なテーブルが存在せず、後続手順が失敗する可能性があります。
 - backend起動時にimport errorなどが発生する場合は、ライブラリのインストール漏れがないか確認してください。
-- frontendやmigrate実行時にエラーが発生する場合は、`.env` の `DATABASE_URL`、`BETTER_AUTH_SECRET`、`BETTER_AUTH_URL` の設定値を再確認してください。
+- frontendやmigrate実行時にエラーが発生する場合は、
+  `.env` の `DATABASE_URL`、`BETTER_AUTH_SECRET`、
+  `BETTER_AUTH_URL`、`BACKEND_BASE_URL`、
+  `NEXT_PUBLIC_API_URL` の設定値を再確認してください。

@@ -55,7 +55,7 @@ class Logic(abstract.statement.Logic[Domain]):
                 return await self._accept_infrastructure()
             return is_accepted
         else:
-            await super().exec_command()
+            await super().exec_command(command)
 
     async def _loop(self):
         """インフラ連携ループ"""

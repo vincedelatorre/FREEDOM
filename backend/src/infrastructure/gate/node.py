@@ -11,10 +11,18 @@ from src.infrastructure.command import Button
 
 
 class Node(infrastructure.Node):
+    """遮断機 ノード
+    Attributes:
+        domain (NodeDomain): ドメイン
+        _state (util.status.State): 状態
+        _access (Interface): インターフェース
+        _logger (freedom.log.Logger): ロガー
+        _task (asyncio.Task): 定期処理タスク
+    """
     def __init__(self, domain:NodeDomain):
-        """遮断機連携ノード
+        """インスタンス化
         Args:
-            domain (NodeDomain): 設定
+            domain (NodeDomain): ドメイン
         """
         self.domain = domain
         self._state = util.status.State.WAITING
@@ -27,8 +35,10 @@ class Node(infrastructure.Node):
         """定期ループ処理"""
         try:
             while sys.getrefcount(self) > 2:
-                await asyncio.sleep(self.domain.update_cycle)
-                await self._update()
+                await asyncio.gather(
+                    asyncio.sleep(self.domain.update_cycle),
+                    self._update(),
+                )
         finally:
             await self._access.close()
             self._logger.info("end")
@@ -48,8 +58,12 @@ class Node(infrastructure.Node):
             bool: 通行可能
         """
         if await self._access.read(self.domain.read_address) == self.domain.open_state:
+            if self._state != util.status.State.ACTIVE:
+                self._logger.info("open")
             self._state = util.status.State.ACTIVE
         else:
+            if self._state != util.status.State.WAITING:
+                self._logger.info("close")
             self._state = util.status.State.WAITING
 
     def fetch_status(self) -> util.status.Status:
@@ -111,3 +125,4 @@ class Node(infrastructure.Node):
         """
         if type(self._access) is access.Dummy:
             self._access.state = state
+            self._logger.info(f"set state: {state=}")

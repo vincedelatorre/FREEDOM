@@ -11,6 +11,7 @@ import SwitchForm from './SwitchForm';
 import CheckboxForm from './CheckboxForm';
 import RadioForm from "./RadioForm";
 import SelectForm from './SelectForm';
+import MultiSelectForm from './MultiSelectForm';
 import ColorForm from './ColorForm';
 import LocationForm from './LocationForm';
 import AreaForm from './AreaForm';
@@ -45,6 +46,7 @@ export const FormMap: Record<FormType, React.ComponentType<any>> = {
   checkbox: CheckboxForm,
   radio: RadioForm,
   select: SelectForm,
+  multiSelect: MultiSelectForm,
   color: ColorForm,
   location: LocationForm,
   area: AreaForm,

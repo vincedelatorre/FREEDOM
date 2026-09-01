@@ -40,12 +40,13 @@ type AddressesByNode = Record<string, PlcAddressRow[]>;
 
 type PlcAddressResponse = {
   name?: string;
+  interface?: string;
   bit_addresses?: Array<{
     name: string;
     address: string;
     bit: number;
     data: boolean | null;
-    default?: boolean | null;
+    default: boolean | null;
     enable?: boolean;
   }>;
   word_addresses?: Array<{
@@ -112,7 +113,7 @@ export default function PlcDetailPage() {
       address: row.address,
       bit: row.bit,
       data: row.data,
-      default: row.default ?? null,
+      default: source.interface === "Dummy" && row.default === null ? false : row.default,
     }));
 
     const wordRows: PlcAddressRow[] = (source.word_addresses ?? []).map((row) => ({
@@ -177,7 +178,7 @@ export default function PlcDetailPage() {
                 ? data
                   ? translate("button.on")
                   : translate("button.off")
-                : translate("button.write_word", {value: data}),
+                : translate("button.writeWord", {value: data}),
           }),
           { severity: "success", autoHideDuration: 3000 },
         );
@@ -191,7 +192,7 @@ export default function PlcDetailPage() {
                 ? data
                   ? translate("button.on")
                   : translate("button.off")
-                : translate("button.write_word", {value: data}),
+                : translate("button.writeWord", {value: data}),
           }),
           { severity: "error", autoHideDuration: 3000 },
         );

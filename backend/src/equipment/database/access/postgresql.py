@@ -77,7 +77,8 @@ class PostgreSQL:
                     dsn=self._domain.dsn,
                     timeout=self._domain.timeout,
                     command_timeout=self._domain.timeout,
-                    init=self._init_connection
+                    init=self._init_connection,
+                    min_size=1
                 )
             except Exception:
                 await asyncio.sleep(0)

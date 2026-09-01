@@ -5,153 +5,376 @@
 
 /**
  * publicフォルダ操作api
- * 生成AI丸投げ
+ * 生成AI製
  */
-import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs/promises';
-import path from 'path';
+import { NextRequest, NextResponse } from "next/server";
+import {
+  mkdir,
+  readdir,
+  readFile,
+  stat,
+  unlink,
+  writeFile,
+} from "fs/promises";
+import path from "path";
+import type { GetFolderFilesResponse } from "@/types/api/files";
 
+export const runtime = "nodejs";
 
-export const runtime = 'nodejs'; // fsを使うので node runtime を明示
+const BASE_DIR = path.join(process.cwd(), "uploads");
 
-const PUBLIC_DIR = path.join(process.cwd(), 'public');
+type RouteParams = {
+  params: Promise<{
+    folder?: string[];
+  }>;
+};
 
-function resolveFolderPath(folderSegments: string[] = []) {
-  const folderPath = path.join(PUBLIC_DIR, ...folderSegments);
-  // publicディレクトリ外へのパストラバーサル防止
-  if (!folderPath.startsWith(PUBLIC_DIR)) {
-    throw new Error('Invalid path');
+/**
+ * ベースディレクトリ配下に限定して安全にパスを結合する。
+ * `..` やパス区切り文字を含む不正なセグメントを拒否しパストラバーサルを防止する。
+ */
+function safeJoin(base: string, segments: string[]) {
+  if (segments.some((segment) => !isSafePathSegment(segment))) {
+    return null;
   }
-  return folderPath;
+
+  const targetPath = path.join(base, ...segments);
+
+  const normalizedBase = path.resolve(base);
+  const normalizedTarget = path.resolve(targetPath);
+
+  if (
+    normalizedTarget !== normalizedBase &&
+    !normalizedTarget.startsWith(normalizedBase + path.sep)
+  ) {
+    return null;
+  }
+
+  return normalizedTarget;
 }
 
 /**
- * GET: public/[...folder] 配下のファイル名のリストを返す
- * 例: GET /api/files/images/banners -> public/images/banners 配下のファイル一覧
+ * URLパスまたはファイル名として安全に扱える文字列か判定する。
+ * ディレクトリ移動やパス区切り文字を含む値は拒否する。
  */
-export async function GET(
-  req: NextRequest,
-  context: { params: Promise<{ folder?: string[] }> }
-) {
-  const { folder } = await context.params;
-  const folderSegments = folder ?? [];
-  const dirPath = resolveFolderPath(folderSegments);
+function isSafePathSegment(segment: string): boolean {
+  if (!segment) return false;
+  if (segment === "." || segment === "..") return false;
+  if (segment.includes("/") || segment.includes("\\")) return false;
+  if (/[\u0000-\u001F\u007F]/u.test(segment)) return false;
+
+  return true;
+}
+
+/**
+ * ファイル取得時の Content-Disposition ヘッダーを生成する。
+ * 日本語などの非ASCIIファイル名にも対応できるようfilename* にUTF-8エンコード済みの値を設定する。
+ */
+function createContentDisposition(filename: string) {
+  const encodedFilename = encodeURIComponent(filename);
+
+  return `inline; filename="${encodedFilename}"; filename*=UTF-8''${encodedFilename}`;
+}
+
+/**
+ * 指定されたフォルダ内のファイル一覧をJSONで返却する。
+ * サブフォルダは一覧に含めず、ファイルのみを返却する。
+ */
+async function getFolderFiles(folder: string[], targetDir: string) {
+  const entries = await readdir(targetDir, { withFileTypes: true });
+
+  const files = await Promise.all(
+    entries
+      .filter((entry) => entry.isFile())
+      .map(async (entry) => {
+        const filename = entry.name;
+        const filePath = path.join(targetDir, filename);
+        const fileStat = await stat(filePath);
+
+        return {
+          filename,
+          size: fileStat.size,
+          createdAt: fileStat.birthtime.toISOString(),
+          updatedAt: fileStat.mtime.toISOString(),
+          url: `/api/files/${[...folder, filename]
+            .map(encodeURIComponent)
+            .join("/")}`,
+        };
+      })
+  );
+
+  const response: GetFolderFilesResponse = {
+    path: folder.join("/"),
+    files,
+  };
+
+  return NextResponse.json(response);
+}
+
+/**
+ * 指定されたファイルをバイナリとして返却する。
+ * 画像、PDF、Excel、テキストなど、拡張子に依存せずapplication/octet-stream として返却する。
+ */
+async function getFileBinary(filePath: string, filename: string) {
+  const fileBuffer = await readFile(filePath);
+
+  return new NextResponse(new Uint8Array(fileBuffer), {
+    headers: {
+      "Content-Type": "application/octet-stream",
+      "Content-Disposition": createContentDisposition(filename),
+      "Cache-Control": "no-store",
+    },
+  });
+}
+
+/**
+ * GET API。
+ *
+ * 指定されたパスがフォルダの場合は、フォルダ内のファイル一覧を返却する。
+ * 指定されたパスがファイルの場合は、そのファイルをバイナリとして返却する。
+ *
+ * 使用例:
+ *
+ * ```ts
+ * // フォルダ内のファイル一覧を取得
+ * const res = await fetch("/api/files/products");
+ * const data = await res.json();
+ *
+ * // ファイルをバイナリで取得
+ * const fileRes = await fetch("/api/files/products/sample.pdf");
+ * const blob = await fileRes.blob();
+ * ```
+ */
+export async function GET(_request: NextRequest, context: RouteParams) {
   try {
-    const entries = await fs.readdir(dirPath, { withFileTypes: true });
-    // ファイルのみ返す（ディレクトリは除外）
-    const files = entries
-      .filter((e) => e.isFile())
-      .map((e) => e.name);
-    return NextResponse.json(files);
-  } catch (err: any) {
-    if (err.code === 'ENOENT') {
-      return NextResponse.json([]);
+    const { folder = [] } = await context.params;
+
+    const targetPath = safeJoin(BASE_DIR, folder);
+
+    if (!targetPath) {
+      return NextResponse.json(
+        { error: "Invalid path." },
+        { status: 400 }
+      );
     }
-    console.error(err);
+
+    try {
+      const targetStat = await stat(targetPath);
+
+      if (targetStat.isFile()) {
+        const filename = folder.at(-1);
+
+        if (!filename) {
+          return NextResponse.json(
+            { error: "Invalid filename." },
+            { status: 400 }
+          );
+        }
+
+        return await getFileBinary(targetPath, filename);
+      }
+
+      if (targetStat.isDirectory()) {
+        return await getFolderFiles(folder, targetPath);
+      }
+
+      return NextResponse.json(
+        { error: "The specified path is neither a file nor a directory." },
+        { status: 400 }
+      );
+    } catch (error: any) {
+      if (error?.code === "ENOENT") {
+        return NextResponse.json(
+          { error: "File or directory not found." },
+          { status: 404 }
+        );
+      }
+
+      throw error;
+    }
+  } catch (error) {
+    console.error(error);
+
     return NextResponse.json(
-      { error: 'Internal Server Error' },
+      { error: "Failed to process GET request." },
       { status: 500 }
     );
   }
 }
 
 /**
- * DELETE: queryで指定したファイルを削除
- * 例: DELETE /api/files/images?file=test.png -> public/images/test.png 削除
+ * POST API。
+ *
+ * 指定されたフォルダに複数ファイルを保存する。
+ * 同名ファイルが既に存在する場合は上書き更新する。
+ *
+ * 使用例:
+ *
+ * ```ts
+ * const formData = new FormData();
+ *
+ * for (const file of files) {
+ *   formData.append("files", file);
+ * }
+ *
+ * const res = await fetch("/api/files/products", {
+ *   method: "POST",
+ *   body: formData,
+ * });
+ *
+ * const data = await res.json();
+ * ```
  */
-export async function DELETE(
-  req: NextRequest,
-  context: { params: Promise<{ folder?: string[] }> }
-) {
-  const { folder } = await context.params;
-  const folderSegments = folder ?? [];
-  const dirPath = resolveFolderPath(folderSegments);
-  const { searchParams } = new URL(req.url);
-  const fileName = searchParams.get('file');
-  if (!fileName) {
-    return NextResponse.json(
-      { error: 'Query parameter "file" is required' },
-      { status: 400 }
-    );
-  }
-  const filePath = path.join(dirPath, fileName);
-  // 再度パスチェック（fileName に ../ が入るなどのケース）
-  if (!filePath.startsWith(PUBLIC_DIR)) {
-    return NextResponse.json(
-      { error: 'Invalid file path' },
-      { status: 400 }
-    );
-  }
+export async function POST(request: NextRequest, context: RouteParams) {
   try {
-    await fs.unlink(filePath);
-    return NextResponse.json({ success: true });
-  } catch (err: any) {
-    if (err.code === 'ENOENT') {
+    const { folder = [] } = await context.params;
+
+    const targetDir = safeJoin(BASE_DIR, folder);
+
+    if (!targetDir) {
       return NextResponse.json(
-        { error: 'File not found' },
+        { error: "Invalid folder path." },
+        { status: 400 }
+      );
+    }
+
+    const formData = await request.formData();
+
+    let files = formData.getAll("files");
+
+    if (files.length === 0) {
+      files = formData.getAll("file");
+    }
+
+    const uploadFiles = files.filter((value): value is File => {
+      return value instanceof File;
+    });
+
+    if (uploadFiles.length === 0) {
+      return NextResponse.json(
+        { error: "No files were provided." },
+        { status: 400 }
+      );
+    }
+
+    await mkdir(targetDir, { recursive: true });
+
+    const savedFiles = [];
+
+    for (const file of uploadFiles) {
+      const filename = file.name;
+
+      if (!isSafePathSegment(filename)) {
+        return NextResponse.json(
+          { error: `Invalid filename: ${filename}` },
+          { status: 400 }
+        );
+      }
+
+      const filePath = safeJoin(targetDir, [filename]);
+
+      if (!filePath) {
+        return NextResponse.json(
+          { error: `Invalid file path: ${filename}` },
+          { status: 400 }
+        );
+      }
+
+      const arrayBuffer = await file.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+
+      await writeFile(filePath, buffer);
+
+      savedFiles.push({
+        filename,
+        size: file.size,
+        url: `/api/files/${[...folder, filename]
+          .map(encodeURIComponent)
+          .join("/")}`,
+      });
+    }
+
+    return NextResponse.json({
+      message: "Files saved successfully.",
+      path: folder.join("/"),
+      count: savedFiles.length,
+      files: savedFiles,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return NextResponse.json(
+      { error: "Failed to save files." },
+      { status: 500 }
+    );
+  }
+}
+
+/**
+ * DELETE API。
+ *
+ * 指定されたファイルを削除する。
+ * URLは削除対象ファイルまで含める。
+ * フォルダ指定のみの削除は許可しない。
+ *
+ * 使用例:
+ *
+ * ```ts
+ * const res = await fetch("/api/files/products/sample.pdf", {
+ *   method: "DELETE",
+ * });
+ *
+ * const data = await res.json();
+ * ```
+ */
+export async function DELETE(_request: NextRequest, context: RouteParams) {
+  try {
+    const { folder = [] } = await context.params;
+
+    if (folder.length === 0) {
+      return NextResponse.json(
+        { error: "File path is required." },
+        { status: 400 }
+      );
+    }
+
+    const targetPath = safeJoin(BASE_DIR, folder);
+
+    if (!targetPath) {
+      return NextResponse.json(
+        { error: "Invalid file path." },
+        { status: 400 }
+      );
+    }
+
+    const targetStat = await stat(targetPath);
+
+    if (!targetStat.isFile()) {
+      return NextResponse.json(
+        { error: "The target must be a file." },
+        { status: 400 }
+      );
+    }
+
+    await unlink(targetPath);
+
+    return NextResponse.json({
+      message: "File deleted successfully.",
+      path: folder.slice(0, -1).join("/"),
+      filename: folder.at(-1),
+    });
+  } catch (error: any) {
+    if (error?.code === "ENOENT") {
+      return NextResponse.json(
+        { error: "File not found." },
         { status: 404 }
       );
     }
-    console.error(err);
-    return NextResponse.json(
-      { error: 'Internal Server Error' },
-      { status: 500 }
-    );
-  }
-}
 
-/**
- * PUT: bodyで渡した File オブジェクトを保存・上書き
- * 例:
- * const fd = new FormData();
- * fd.append('file', file); // Fileオブジェクト
- * fetch('/api/files/images', { method: 'PUT', body: fd })
- */
-export async function PUT(
-  req: NextRequest,
-  context: { params: Promise<{ folder?: string[] }> }
-) {
-  const { folder } = await context.params;
-  const folderSegments = folder ?? [];
-  const dirPath = resolveFolderPath(folderSegments);
-  const formData = await req.formData();
-  const file = formData.get('file');
-  if (!(file instanceof File)) {
+    console.error(error);
+
     return NextResponse.json(
-      { error: 'Form field "file" must be a File' },
-      { status: 400 }
-    );
-  }
-  const fileName = file.name;
-  if (!fileName) {
-    return NextResponse.json(
-      { error: 'File must have a name' },
-      { status: 400 }
-    );
-  }
-  const filePath = path.join(dirPath, fileName);
-  if (!filePath.startsWith(PUBLIC_DIR)) {
-    return NextResponse.json(
-      { error: 'Invalid file path' },
-      { status: 400 }
-    );
-  }
-  try {
-    const arrayBuffer = await file.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-    // ディレクトリが無ければ作成
-    await fs.mkdir(dirPath, { recursive: true });
-    // 保存・上書き
-    await fs.writeFile(filePath, buffer);
-    return NextResponse.json({
-      success: true,
-      fileName,
-      path: filePath.replace(PUBLIC_DIR, ''), // 公開パス的な情報
-    });
-  } catch (err) {
-    console.error(err);
-    return NextResponse.json(
-      { error: 'Internal Server Error' },
+      { error: "Failed to delete file." },
       { status: 500 }
     );
   }

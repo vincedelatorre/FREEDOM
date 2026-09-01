@@ -19,8 +19,10 @@ class Node(robot.Node[NodeDomain]):
     async def _loop(self):
         while sys.getrefcount(self) > 2:
             try:
-                await asyncio.sleep(self.domain.update_cycle)
-                await self._update()
+                await asyncio.gather(
+                    asyncio.sleep(self.domain.update_cycle),
+                    self._update(),
+                )
             except asyncio.CancelledError:
                 break
         self._logger.info("close")

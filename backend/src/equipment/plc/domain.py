@@ -8,7 +8,41 @@ from src import abstract, equipment
 
 
 @dataclasses.dataclass
-class BitAddress(abstract.Domain):
+class Address(abstract.Domain):
+    """アドレス設定 基底クラス
+    Attributes:
+        enable (bool): 有効
+        name (str): 名前
+        address (str): アドレス
+    """
+    enable: bool = True
+    name:str =""
+    address: str = ""
+
+    @classmethod
+    def make_form(cls):
+        """設定フォーム作成
+        Returns:
+            dict: 設定フォーム
+        """
+        return {
+            "enable": {
+                "type": "switch",
+                "label": "有効",
+            },
+            "name": {
+                "type": "text",
+                "label": "名前",
+            },
+            "address": {
+                "type": "text",
+                "label": "アドレス",
+            }
+        }
+
+
+@dataclasses.dataclass
+class BitAddress(Address):
     """ビットアドレス設定
     Attributes:
         enable (bool): 有効
@@ -18,9 +52,6 @@ class BitAddress(abstract.Domain):
         default (bool|None): 初期値
         data (bool): データ
     """
-    enable: bool = True
-    name:str =""
-    address: str = ""
     bit: int = 0
     default: bool|None = None
 
@@ -34,19 +65,7 @@ class BitAddress(abstract.Domain):
         Returns:
             dict: 設定フォーム
         """
-        return {
-            "enable": {
-                "type": "switch",
-                "label": "有効",
-            },
-            "name": {
-                "type": "text",
-                "label": "名前",
-            },
-            "address": {
-                "type": "text",
-                "label": "アドレス",
-            },
+        return super().make_form() | {
             "bit": {
                 "type": "number",
                 "label": "ビット",
@@ -56,15 +75,15 @@ class BitAddress(abstract.Domain):
             },
             "default": {
                 "type": "select",
-                "label": "初期値",
-                "items": {"None": None, "1": True, "0": False},
+                "label": "既定値",
+                "items": {"読取り専用": None, "1": True, "0": False},
                 "required": False,
             }
         }
 
 
 @dataclasses.dataclass
-class WordAddress(abstract.Domain):
+class WordAddress(Address):
     """ワードアドレス設定
     Attributes:
         enable (bool): 有効
@@ -72,39 +91,14 @@ class WordAddress(abstract.Domain):
         address (str): アドレス
         data (int): データ
     """
-    enable: bool = True
-    name:str = ""
-    address: str = ""
-
     def __post_init__(self):
         """初期化後処理"""
         self.data = 0
 
-    @classmethod
-    def make_form(cls):
-        """設定フォーム作成
-        Returns:
-            dict: 設定フォーム
-        """
-        return {
-            "enable": {
-                "type": "switch",
-                "label": "有効",
-            },
-            "name": {
-                "type": "text",
-                "label": "名前",
-            },
-            "address": {
-                "type": "text",
-                "label": "アドレス",
-            }
-        }
-
 
 @dataclasses.dataclass
-class HeartbeatAddress(abstract.Domain):
-    """ハートビートアドレス設定
+class CycleBitAddress(Address):
+    """周期ビットアドレス設定
     Attributes:
         enable (bool): 有効
         name (str): 名前
@@ -112,11 +106,12 @@ class HeartbeatAddress(abstract.Domain):
         bit (int): ビット
         interval (float): 更新周期秒
     """
-    enable: bool = True
-    name:str =""
-    address: str = ""
     bit: int = 0
     interval: float = 1.0
+
+    def __post_init__(self):
+        """初期化後処理"""
+        self.data = False
 
     @classmethod
     def make_form(cls):
@@ -124,19 +119,7 @@ class HeartbeatAddress(abstract.Domain):
         Returns:
             dict: 設定フォーム
         """
-        return {
-            "enable": {
-                "type": "switch",
-                "label": "有効",
-            },
-            "name": {
-                "type": "text",
-                "label": "名前",
-            },
-            "address": {
-                "type": "text",
-                "label": "アドレス",
-            },
+        return super().make_form() | {
             "bit": {
                 "type": "number",
                 "label": "ビット",
@@ -150,7 +133,6 @@ class HeartbeatAddress(abstract.Domain):
                 "suffix": "秒",
             },
         }
-
 
 
 @dataclasses.dataclass
@@ -167,19 +149,19 @@ class NodeDomain(abstract.Domain):
         update_cycle (float): 更新周期
         bit_addresses: (list[BitAddress]): ビットアドレス設定リスト
         word_addresses: (list[WordAddress]): ワードアドレス設定リスト
-        heartbeat_addresses: (list[HeartbeatAddress]): ハートビートアドレス設定リスト
+        heartbeat_addresses: (list[CycleBitAddress]): ハートビートアドレス設定リスト
     """
     enable: bool = True
     name: str = ""
     location: list[float] = dataclasses.field(default_factory=lambda: [0.0, 0.0])
-    interface: str = "IoTDataShare"
+    interface: str = "Dummy"
     ip: str = "0.0.0.0"
     port: int = 80
     timeout: float = 1.0
     update_cycle: float = 1.0
     bit_addresses: list[BitAddress] = dataclasses.field(default_factory=list)
     word_addresses: list[WordAddress] = dataclasses.field(default_factory=list)
-    heartbeat_addresses: list[HeartbeatAddress] = dataclasses.field(default_factory=list)
+    heartbeat_addresses: list[CycleBitAddress] = dataclasses.field(default_factory=list)
 
     @classmethod
     def make_form(cls):
@@ -212,8 +194,9 @@ class NodeDomain(abstract.Domain):
             "port": {
                 "type": "number",
                 "label": "ポート番号",
-                "decimal": True,
+                "integer": True,
                 "min": 0,
+                "max": 65535,
             },
             "timeout": {
                 "type": "number",
@@ -238,8 +221,8 @@ class NodeDomain(abstract.Domain):
             "heartbeat_addresses": {
                 "type": "table",
                 "label": "ハートビート設定",
-                "default": dataclasses.asdict(HeartbeatAddress()),
-                "forms": HeartbeatAddress.make_form(),
+                "default": dataclasses.asdict(CycleBitAddress()),
+                "forms": CycleBitAddress.make_form(),
                 "width": 800,
             },
         }
@@ -248,7 +231,7 @@ class NodeDomain(abstract.Domain):
         """初期化後処理"""
         self.bit_addresses = [BitAddress(**address) for address in self.bit_addresses if address.get("enable", False)]
         self.word_addresses = [WordAddress(**address) for address in self.word_addresses if address.get("enable", False)]
-        self.heartbeat_addresses = [HeartbeatAddress(**address) for address in self.heartbeat_addresses if address.get("enable", False)]
+        self.heartbeat_addresses = [CycleBitAddress(**address) for address in self.heartbeat_addresses if address.get("enable", False)]
 
 
 @dataclasses.dataclass

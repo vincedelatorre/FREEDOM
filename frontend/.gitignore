@@ -145,8 +145,6 @@ dist-ssr
 .yarn/build-state.yml
 .yarn/install-state.gz
 
-# public
-public/icons/*
-!public/icons/.gitkeep
-public/map_images/*
-!public/map_images/.gitkeep
+# upload files
+uploads/*
+!uploads/.gitkeep

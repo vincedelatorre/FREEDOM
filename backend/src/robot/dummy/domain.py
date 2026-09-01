@@ -51,4 +51,4 @@ class Domain(abstract.Domain):
 
     def __post_init__(self):
         """初期化後処理"""
-        self.node_domain = [NodeDomain(**node_domain) for node_domain in self.node_domain]
+        self.node_domain = [NodeDomain(**node_domain) for node_domain in self.node_domain if node_domain.get("enable", False)]

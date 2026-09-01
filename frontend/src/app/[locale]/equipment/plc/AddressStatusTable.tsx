@@ -141,7 +141,7 @@ export default function PlcAddressTable({
     }
 
     if (!/^\d+$/.test(trimmedValue)) {
-      return translate("table.error_message");
+      return translate("table.errorMessage");
     }
 
     return "";
@@ -291,7 +291,11 @@ export default function PlcAddressTable({
                     </TableCell>
 
                     <TableCell>
-                      {row.type === "bit" ? (
+                      {row.type === "bit" && row.default === null ? (
+                        <Typography>
+                          {translate("table.readOnly")}
+                        </Typography>
+                      ) : row.type === "bit" ? (
                         <Stack direction="row" spacing={1}>
                           <Button
                             variant="contained"

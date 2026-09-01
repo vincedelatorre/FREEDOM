@@ -9,7 +9,7 @@ from src.job.task import abstract
 
 @dataclasses.dataclass
 class Domain(abstract.statement.Domain):
-    """EquipmentPLC変数セットタスク
+    """PLC変数セットタスク
     Args:
         type (str): タスク種類
         id (str): タスクID

@@ -69,7 +69,7 @@ async function main() {
       database: pool,
       emailAndPassword: {
         enabled: true,
-        minPasswordLength: 6,
+        minPasswordLength: 1,
         maxPasswordLength: 128,
       },
       plugins: [username(), admin()],

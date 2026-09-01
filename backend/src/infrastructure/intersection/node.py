@@ -11,10 +11,20 @@ from src.infrastructure.command import Button
 
 
 class Node(infrastructure.Node):
+    """交差点 ノード
+    Attributes:
+        domain (NodeDomain): ドメイン
+        _state (util.status.State): 状態
+        _reserve_robot (dict[robot.Node[robot.Domain],int]): 予約中ロボット
+        _entry_robot (set[robot.Node[robot.Domain]]): 進入中ロボット
+        _exit_robot (set[robot.Node[robot.Domain]]): 退出中ロボット
+        _logger (freedom.log.Logger): ロガー
+        _task (asyncio.Task): 定期処理タスク
+    """
     def __init__(self, domain:NodeDomain):
-        """交差点ノード
+        """インスタンス化
         Args:
-            domain (NodeDomain): 設定
+            domain (NodeDomain): ドメイン
         """
         self.domain = domain
         self._state = util.status.State.WAITING

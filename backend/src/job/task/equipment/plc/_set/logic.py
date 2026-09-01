@@ -4,11 +4,11 @@
 from src.repository import repository
 from src import job
 from src.job.task import abstract
-from src.job.task.common.logic._logic_set import Domain
+from src.job.task.equipment.plc._set import Domain
 
 
 class Logic(abstract.statement.Logic[Domain]):
-    """EquipmentPLC変数セットタスク処理"""
+    """PLC変数セットタスク処理"""
     async def init(self):
         """ジョブ開始・復帰時処理"""
         await super().init()
