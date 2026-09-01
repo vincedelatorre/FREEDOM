@@ -6,7 +6,7 @@
 "use client";
 import React, { memo, useMemo, useEffect, useState, useCallback } from "react";
 import { Popup, useMap } from "react-map-gl/maplibre";
-import * as maplibregl from 'maplibre-gl';
+import maplibregl from "maplibre-gl";
 import { useTheme } from "@mui/material/styles";
 import { useTranslations } from "next-intl";
 import StatusChip from "@/components/map/StatusChip";
