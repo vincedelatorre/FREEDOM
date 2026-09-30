@@ -316,7 +316,7 @@ export default function PlcAddressTable({
                           </Button>
                         </Stack>
                       ) : (
-                        <Stack direction="row" spacing={1} alignItems="flex-start">
+                        <Stack direction="row" spacing={1} sx={{ alignItems: "flex-start" }}>
                           <TextField
                             size="small"
                             type="text"
@@ -326,9 +326,11 @@ export default function PlcAddressTable({
                             helperText={errorMessage || undefined}
                             disabled={isSending}
                             sx={{ width: 65 }}
-                            inputProps={{
-                              inputMode: "numeric",
-                              pattern: "[0-9]*",
+                            slotProps={{
+                              htmlInput: {
+                                inputMode: "numeric",
+                                pattern: "[0-9]*",
+                              },
                             }}
                           />
 

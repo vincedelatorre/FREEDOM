@@ -442,11 +442,13 @@ const SortableAreaRow = ({
                     }}
                     size="small"
                     fullWidth
-                    InputProps={{
-                      sx: {
-                        fontSize: "12px",
-                        fontFamily: "monospace",
-                        height: "28px"
+                    slotProps={{
+                      input: {
+                        sx: {
+                          fontSize: "12px",
+                          fontFamily: "monospace",
+                          height: "28px"
+                        }
                       }
                     }}
                   />
@@ -462,11 +464,13 @@ const SortableAreaRow = ({
                     }}
                     size="small"
                     fullWidth
-                    InputProps={{
-                      sx: {
-                        fontSize: "12px",
-                        fontFamily: "monospace",
-                        height: "28px"
+                    slotProps={{
+                      input: {
+                        sx: {
+                          fontSize: "12px",
+                          fontFamily: "monospace",
+                          height: "28px"
+                        }
                       }
                     }}
                   />

@@ -93,10 +93,12 @@ function AreaDialog({ payload, open, onClose }: DialogProps<Area[], Area[]>) {
       maxWidth="lg"
       open={open}
       onClose={() => onClose(result)}
-      PaperProps={{
-        sx: {
-          height: "calc(100vh - 96px)",
-          maxHeight: "820px",
+      slotProps={{
+        paper: {
+          sx: {
+            height: "calc(100vh - 96px)",
+            maxHeight: "820px",
+          },
         },
       }}
     >
