@@ -46,7 +46,7 @@ export default function DialogForm({ name, form, disabled, validate }: FormProps
 
   return (
     <Stack spacing={1}>
-      <Stack direction="row" spacing={1} alignItems="center">
+      <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
         <Typography>{form.label}</Typography>
         <Button
           type="button"

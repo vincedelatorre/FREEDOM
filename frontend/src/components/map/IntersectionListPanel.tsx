@@ -427,22 +427,24 @@ const SortableAreaRow = ({
                     onChange={(e) => onUpdateVertex(i, "lat", toNumWithFallback(c[1], e.target.value))}
                     size="small"
                     fullWidth
-                    InputProps={{
-                      sx: {
-                        fontSize: "12px",
-                        fontFamily: "monospace",
-                        height: "28px",
-                        // '& input[type=number]': {
-                        //   MozAppearance: 'textfield', // Firefoxの場合必要
-                        // },
-                        '& input[type=number]::-webkit-outer-spin-button': {
-                          WebkitAppearance: 'none',
-                          margin: 0,
-                        },
-                        '& input[type=number]::-webkit-inner-spin-button': {
-                          WebkitAppearance: 'none',
-                          margin: 0,
-                        },
+                    slotProps={{
+                      input: {
+                        sx: {
+                          fontSize: "12px",
+                          fontFamily: "monospace",
+                          height: "28px",
+                          // '& input[type=number]': {
+                          //   MozAppearance: 'textfield', // Firefoxの場合必要
+                          // },
+                          '& input[type=number]::-webkit-outer-spin-button': {
+                            WebkitAppearance: 'none',
+                            margin: 0,
+                          },
+                          '& input[type=number]::-webkit-inner-spin-button': {
+                            WebkitAppearance: 'none',
+                            margin: 0,
+                          },
+                        }
                       }
                     }}
                   />
@@ -454,22 +456,24 @@ const SortableAreaRow = ({
                     onChange={(e) => onUpdateVertex(i, "lng", toNumWithFallback(c[0], e.target.value))}
                     size="small"
                     fullWidth
-                    InputProps={{
-                      sx: {
-                        fontSize: "12px",
-                        fontFamily: "monospace",
-                        height: "28px",
-                        // '& input[type=number]': {
-                        //   MozAppearance: 'textfield', // Firefoxの場合必要
-                        // },
-                        '& input[type=number]::-webkit-outer-spin-button': {
-                          WebkitAppearance: 'none',
-                          margin: 0,
-                        },
-                        '& input[type=number]::-webkit-inner-spin-button': {
-                          WebkitAppearance: 'none',
-                          margin: 0,
-                        },
+                    slotProps={{
+                      input: {
+                        sx: {
+                          fontSize: "12px",
+                          fontFamily: "monospace",
+                          height: "28px",
+                          // '& input[type=number]': {
+                          //   MozAppearance: 'textfield', // Firefoxの場合必要
+                          // },
+                          '& input[type=number]::-webkit-outer-spin-button': {
+                            WebkitAppearance: 'none',
+                            margin: 0,
+                          },
+                          '& input[type=number]::-webkit-inner-spin-button': {
+                            WebkitAppearance: 'none',
+                            margin: 0,
+                          },
+                        }
                       }
                     }}
                   />
@@ -508,20 +512,22 @@ const SortableAreaRow = ({
                 mr: "36px", //  ゴミ箱アイコン分調整
                 textAlign: "right",
               }}
-              InputProps={{
-                sx: {
-                  fontSize: "12px",
-                  fontFamily: "monospace",
-                  height: "36px",
-                  '& input[type=number]::-webkit-outer-spin-button': {
-                    WebkitAppearance: 'none',
-                    margin: 0,
-                  },
-                  '& input[type=number]::-webkit-inner-spin-button': {
-                    WebkitAppearance: 'none',
-                    margin: 0,
-                  },
-                  textAlign: "right", //  入力文字も右寄せ
+              slotProps={{
+                input: {
+                  sx: {
+                    fontSize: "12px",
+                    fontFamily: "monospace",
+                    height: "36px",
+                    '& input[type=number]::-webkit-outer-spin-button': {
+                      WebkitAppearance: 'none',
+                      margin: 0,
+                    },
+                    '& input[type=number]::-webkit-inner-spin-button': {
+                      WebkitAppearance: 'none',
+                      margin: 0,
+                    },
+                    textAlign: "right", //  入力文字も右寄せ
+                  }
                 }
               }}
             />

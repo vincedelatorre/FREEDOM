@@ -1,0 +1,169 @@
+diff --git a/node_modules/@toolpad/core/esm/Account/AccountPreview.js b/node_modules/@toolpad/core/esm/Account/AccountPreview.js
+index a76fb64..08de6c2 100644
+--- a/node_modules/@toolpad/core/esm/Account/AccountPreview.js
++++ b/node_modules/@toolpad/core/esm/Account/AccountPreview.js
+@@ -53,8 +53,8 @@ function AccountPreview(props) {
+   if (variant === 'expanded') {
+     return /*#__PURE__*/_jsxs(Stack, {
+       direction: "row",
+-      justifyContent: "space-between",
+       sx: {
++        justifyContent: 'space-between',
+         py: 1,
+         px: 2,
+         gap: 2,
+@@ -62,16 +62,22 @@ function AccountPreview(props) {
+       },
+       children: [/*#__PURE__*/_jsxs(Stack, {
+         direction: "row",
+-        justifyContent: "flex-start",
+         spacing: 2,
+-        overflow: "hidden",
++        sx: {
++          justifyContent: 'flex-start',
++          overflow: 'hidden'
++        },
+         children: [avatarContent, /*#__PURE__*/_jsxs(Stack, {
+           direction: "column",
+-          justifyContent: "space-evenly",
+-          overflow: "hidden",
++          sx: {
++            justifyContent: 'space-evenly',
++            overflow: 'hidden'
++          },
+           children: [/*#__PURE__*/_jsx(Typography, {
+             variant: "body2",
+-            fontWeight: "bolder",
++            sx: {
++              fontWeight: 'bolder'
++            },
+             noWrap: true,
+             children: session.user?.name
+           }), /*#__PURE__*/_jsx(Typography, {
+diff --git a/node_modules/@toolpad/core/esm/DashboardLayout/AppTitle.js b/node_modules/@toolpad/core/esm/DashboardLayout/AppTitle.js
+index cd173af..40e5135 100644
+--- a/node_modules/@toolpad/core/esm/DashboardLayout/AppTitle.js
++++ b/node_modules/@toolpad/core/esm/DashboardLayout/AppTitle.js
+@@ -30,7 +30,9 @@ export function AppTitle(props) {
+     },
+     children: /*#__PURE__*/_jsxs(Stack, {
+       direction: "row",
+-      alignItems: "center",
++      sx: {
++        alignItems: 'center'
++      },
+       children: [/*#__PURE__*/_jsx(LogoContainer, {
+         children: props?.branding?.logo ?? (_ToolpadLogo || (_ToolpadLogo = /*#__PURE__*/_jsx(ToolpadLogo, {
+           size: 40
+diff --git a/node_modules/@toolpad/core/esm/DashboardLayout/DashboardHeader.js b/node_modules/@toolpad/core/esm/DashboardLayout/DashboardHeader.js
+index 2c6a579..0b863ba 100644
+--- a/node_modules/@toolpad/core/esm/DashboardLayout/DashboardHeader.js
++++ b/node_modules/@toolpad/core/esm/DashboardLayout/DashboardHeader.js
+@@ -84,9 +84,9 @@ function DashboardHeader(props) {
+       },
+       children: /*#__PURE__*/_jsxs(Stack, {
+         direction: "row",
+-        justifyContent: "space-between",
+-        alignItems: "center",
+         sx: {
++          justifyContent: 'space-between',
++          alignItems: 'center',
+           flexWrap: 'wrap',
+           width: '100%'
+         },
+@@ -129,9 +129,9 @@ function DashboardHeader(props) {
+           })]
+         }), /*#__PURE__*/_jsxs(Stack, {
+           direction: "row",
+-          alignItems: "center",
+           spacing: 1,
+           sx: {
++            alignItems: 'center',
+             marginLeft: 'auto'
+           },
+           children: [/*#__PURE__*/_jsx(ToolbarActionsSlot, {
+diff --git a/node_modules/@toolpad/core/esm/DashboardLayout/ToolbarActions.js b/node_modules/@toolpad/core/esm/DashboardLayout/ToolbarActions.js
+index bf201ea..7bc1f3a 100644
+--- a/node_modules/@toolpad/core/esm/DashboardLayout/ToolbarActions.js
++++ b/node_modules/@toolpad/core/esm/DashboardLayout/ToolbarActions.js
+@@ -20,7 +20,9 @@ import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+ function ToolbarActions() {
+   return _Stack || (_Stack = /*#__PURE__*/_jsxs(Stack, {
+     direction: "row",
+-    alignItems: "center",
++    sx: {
++      alignItems: 'center'
++    },
+     children: [/*#__PURE__*/_jsx(ThemeSwitcher, {}), /*#__PURE__*/_jsx(Account, {})]
+   }));
+ }
+diff --git a/node_modules/@toolpad/core/esm/SignInPage/SignInPage.js b/node_modules/@toolpad/core/esm/SignInPage/SignInPage.js
+index f1fc5e6..a87d646 100644
+--- a/node_modules/@toolpad/core/esm/SignInPage/SignInPage.js
++++ b/node_modules/@toolpad/core/esm/SignInPage/SignInPage.js
+@@ -396,7 +396,9 @@ function SignInPage(props) {
+                   children: [/*#__PURE__*/_jsxs(Stack, {
+                     direction: "column",
+                     spacing: 2,
+-                    marginTop: 1,
++                    sx: {
++                      marginTop: 1
++                    },
+                     children: [slots?.emailField ? /*#__PURE__*/_jsx(slots.emailField, {
+                       ...slotProps?.emailField
+                     }) : /*#__PURE__*/_jsx(TextField, {
+@@ -425,12 +427,11 @@ function SignInPage(props) {
+                     })]
+                   }), slots?.forgotPasswordLink || slots?.rememberMe ? /*#__PURE__*/_jsxs(Stack, {
+                     direction: "row",
+-                    justifyContent: "space-between",
+-                    alignItems: "center",
+                     spacing: 1,
+-                    mt: 2,
+                     sx: {
+-                      justifyContent: 'space-between'
++                      justifyContent: 'space-between',
++                      alignItems: 'center',
++                      mt: 2
+                     },
+                     children: [slots?.rememberMe ? /*#__PURE__*/_jsx(slots.rememberMe, {
+                       ...slotProps?.rememberMe
+diff --git a/node_modules/@toolpad/core/esm/shared/components.js b/node_modules/@toolpad/core/esm/shared/components.js
+index 859ebb2..356767a 100644
+--- a/node_modules/@toolpad/core/esm/shared/components.js
++++ b/node_modules/@toolpad/core/esm/shared/components.js
+@@ -30,7 +30,9 @@ export function ErrorOverlay({
+         color: "error"
+       })), " Error"]
+     }), /*#__PURE__*/_jsx(Typography, {
+-      textAlign: "center",
++      sx: {
++        textAlign: 'center'
++      },
+       children: error?.message ?? 'Unknown error'
+     })]
+   });
+diff --git a/node_modules/@toolpad/core/esm/useDialogs/useDialogs.js b/node_modules/@toolpad/core/esm/useDialogs/useDialogs.js
+index d9304f8..f2d099e 100644
+--- a/node_modules/@toolpad/core/esm/useDialogs/useDialogs.js
++++ b/node_modules/@toolpad/core/esm/useDialogs/useDialogs.js
+@@ -130,8 +130,9 @@ export function PromptDialog({
+     fullWidth: true,
+     open: open,
+     onClose: () => onClose(null),
+-    PaperProps: {
+-      component: 'form',
++    slotProps: {
++      paper: {
++        component: 'form',
+       onSubmit: async event => {
+         event.preventDefault();
+         try {
+@@ -144,6 +145,7 @@ export function PromptDialog({
+           setLoading(false);
+         }
+       }
++    }
+     },
+     container: appWindowContext?.document.body,
+     children: [/*#__PURE__*/_jsx(DialogTitle, {

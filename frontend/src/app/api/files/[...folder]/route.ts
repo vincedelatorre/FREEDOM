@@ -159,7 +159,7 @@ export async function GET(_request: NextRequest, context: RouteParams) {
     }
 
     try {
-      const targetStat = await stat(targetPath);
+      const targetStat = await stat(/*turbopackIgnore: true*/ targetPath);
 
       if (targetStat.isFile()) {
         const filename = folder.at(-1);
@@ -347,7 +347,7 @@ export async function DELETE(_request: NextRequest, context: RouteParams) {
       );
     }
 
-    const targetStat = await stat(targetPath);
+    const targetStat = await stat(/*turbopackIgnore: true*/ targetPath);
 
     if (!targetStat.isFile()) {
       return NextResponse.json(

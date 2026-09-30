@@ -67,7 +67,7 @@ export default function InfrastructureCommand({
 
   /** コマンド表示 */
   return (
-    <Stack direction={{ xs: "column", sm: "row" }} gap={2} sx={{ flexWrap: { xs: "nowrap", sm: "wrap" } }}>
+    <Stack direction={{ xs: "column", sm: "row" }} sx={{ gap: 2, flexWrap: { xs: "nowrap", sm: "wrap" } }}>
       {commands.map((cmd, idx) => {
         const CommandComponent = CommandMap[cmd.type];
         if (!CommandComponent) return null;

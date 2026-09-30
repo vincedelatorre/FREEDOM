@@ -539,9 +539,8 @@ export default function Page() {
       <Stack spacing={1.5}>
         <Stack
           direction={{ xs: "column", sm: "row" }}
-          alignItems="center"
-          justifyContent="space-between"
           spacing={1.5}
+          sx={{ alignItems: "center", justifyContent: "space-between" }}
         >
           <Typography variant="h5" sx={{ fontWeight: 700 }}>
             {t("title")}
@@ -567,7 +566,7 @@ export default function Page() {
           </Stack>
         </Stack>
 
-        <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} alignItems="center">
+        <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} sx={{ alignItems: "center" }}>
           <TextField
             size="small"
             label={t("labels.search")}
@@ -609,7 +608,7 @@ export default function Page() {
                 justifyContent: "center",
               }}
             >
-              <Stack alignItems="center" spacing={2}>
+              <Stack spacing={2} sx={{ alignItems: "center" }}>
                 <CircularProgress />
                 {busy ? (
                   <Typography variant="body2" color="text.secondary">

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import type maplibregl from "maplibre-gl";
+import type * as maplibregl from "maplibre-gl";
 import { MAP_MARKER_PRIORITY, MAP_Z_INDEX } from "@/components/map/mapZIndex";
 
 export function getDomainTier(group?: string): number {

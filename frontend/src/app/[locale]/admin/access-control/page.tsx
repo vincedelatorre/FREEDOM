@@ -515,7 +515,7 @@ export default function Page() {
           {t("title")}
         </Typography>
 
-        <Stack direction={{ xs: "column", sm: "row" }} spacing={1} alignItems={{ sm: "center" }}>
+        <Stack direction={{ xs: "column", sm: "row" }} spacing={1} sx={{ alignItems: { sm: "center" } }}>
           <Autocomplete
             options={users}
             value={users.find((u) => u.id === userId) ?? null}
@@ -582,7 +582,7 @@ export default function Page() {
                 justifyContent: "center",
               }}
             >
-              <Stack alignItems="center" spacing={2}>
+              <Stack spacing={2} sx={{ alignItems: "center" }}>
                 <CircularProgress />
                 {busy ? (
                   <Typography variant="body2" color="text.secondary">

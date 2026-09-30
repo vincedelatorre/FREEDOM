@@ -6,7 +6,7 @@
 "use client";
 import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Source, Layer, useMap } from "react-map-gl/maplibre";
-import type maplibregl from "maplibre-gl";
+import type * as maplibregl from "maplibre-gl";
 
 /** === 型定義 === */
 export interface ImageResponse {

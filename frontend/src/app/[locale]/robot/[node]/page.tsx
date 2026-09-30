@@ -161,7 +161,7 @@ export default function RobotDetailPage() {
                           },
                         }}
                       >
-                        <Grid container alignItems="center" spacing={2} sx={{ width: "100%", mr: 1, minWidth: 0 }}>
+                        <Grid container spacing={2} sx={{ width: "100%", mr: 1, minWidth: 0, alignItems: "center" }}>
                           {/* 名前 */}
                           <Grid size={5} sx={{ minWidth: 0 }}>
                             <Typography

@@ -282,7 +282,7 @@ export default function NodeTab(props: {
 
   return (
     <Stack spacing={1.5} sx={{ height: "100%" }}>
-      <Stack direction={{ xs: "column", sm: "row" }} spacing={2} alignItems={{ sm: "center" }}>
+      <Stack direction={{ xs: "column", sm: "row" }} spacing={2} sx={{ alignItems: { sm: "center" } }}>
         <TextField
           size="small"
           label={t("labels.search")}

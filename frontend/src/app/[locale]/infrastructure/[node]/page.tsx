@@ -186,7 +186,7 @@ export default function InfrastructureDetailPage() {
                         },
                       }}
                     >
-                      <Grid container alignItems="center" spacing={2} sx={{ width: "100%", mr: 1, minWidth: 0 }}>
+                      <Grid container spacing={2} sx={{ width: "100%", mr: 1, minWidth: 0, alignItems: "center" }}>
                         {/* 名前 */}
                         <Grid size={8} sx={{ minWidth: 0 }}>
                           <Typography
@@ -211,7 +211,7 @@ export default function InfrastructureDetailPage() {
 
                     {/* アコーディオン展開後 */}
                     <AccordionDetails id={detailsId}>
-                      <Grid container spacing={2} margin={2}>
+                      <Grid container spacing={2} sx={{ m: 2 }}>
                         {/* 手動操作 */}
                         <Grid size={{ xs: 12, md: 6 }}>
                           <CommandCard

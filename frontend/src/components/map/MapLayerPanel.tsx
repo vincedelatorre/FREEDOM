@@ -78,12 +78,14 @@ function Row({
         <Box sx={{ flex: "1 1 auto", minWidth: 0 }}>
           <ListItemText
             primary={item.name}
-            primaryTypographyProps={{
-              noWrap: true,
-              sx: {
-                px: 0.5,
-                borderRadius: 0.75,
-                cursor: "default",
+            slotProps={{
+              primary: {
+                noWrap: true,
+                sx: {
+                  px: 0.5,
+                  borderRadius: 0.75,
+                  cursor: "default",
+                },
               },
             }}
           />
