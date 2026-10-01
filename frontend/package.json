@@ -58,6 +58,15 @@
       "@mui/material": "$@mui/material",
       "@mui/icons-material": "$@mui/icons-material",
       "next": "$next"
+    },
+    "@toolpad/utils": {
+      "yaml": "^2.9.1"
+    },
+    "yaml-diff-patch": {
+      "yaml": "^2.9.1"
+    },
+    "patch-package": {
+      "yaml": "^2.9.1"
     }
   }
 }
