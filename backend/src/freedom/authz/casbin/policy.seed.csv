@@ -4,7 +4,7 @@
 p, guest, ^node:freedom\.main$, ^read$, allow
 p, guest, ^node:freedom\.map$,  ^read$, allow
 p, guest, ^node:freedom\.log$,  ^read$, allow
-p, guest, ^domain:.*$,          ^read$, allow
+p, guest, ^domain:freedom\.(map|user_interface)$, ^read$, allow
 
 # ---- user: readは全許可 ----
 p, user,  ^node:.*$, ^read$, allow
